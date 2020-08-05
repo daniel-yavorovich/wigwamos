@@ -1,25 +1,75 @@
 import time
+import Adafruit_SSD1306
+
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 
 class Screen:
     SCREEN_SHOW_TIMEOUT = 30
+    I2C_ADDRESS = 0x3C
+
+    # Raspberry Pi pin configuration:
+    RST = None  # on the PiOLED this pin isnt used
+    # Note the following are only used with SPI:
+    DC = 23
+    SPI_PORT = 0
+    SPI_DEVICE = 0
 
     def __init__(self):
-        pass
+        self.display = Adafruit_SSD1306.SSD1306_128_64(rst=self.RST, i2c_address=self.I2C_ADDRESS)
+        self.display.begin()
+        self.display.clear()
+        self.display.display()
 
-    def enable(self):
-        # TODO: need implement
-        return True
+        # Create blank image for drawing.
+        # Make sure to create image with mode '1' for 1-bit color.
+        self.width = self.display.width
+        self.height = self.display.height
+        self.image = Image.new('1', (self.width, self.height))
 
-    def disable(self):
-        # TODO: need implement
-        return True
+        # Get drawing object to draw on image.
+        self.draw = ImageDraw.Draw(self.image)
 
-    def show(self, day_count, temperature, humidity):
-        self.enable()
+        # Draw a black filled box to clear the image.
+        self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
 
-        # TODO: need implement
+        # Draw some shapes.
+        # First define some constants to allow easy resizing of shapes.
+        padding = -2
+        self.top = padding
+        self.bottom = self.height - padding
+        # Move left to right keeping track of the current x position for drawing shapes.
+        self.x = 0
 
-        time.sleep(self.SCREEN_SHOW_TIMEOUT)
-        self.disable()
-        return True
+        # Load default font.
+        self.font = ImageFont.load_default()
+
+    def display_show_multiline_text(self, lines):
+        top = self.top
+        top_step = 8
+
+        # Draw a black filled box to clear the image.
+        self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
+
+        for line in lines:
+            self.draw.text((self.x, top), line, font=self.font, fill=255)
+            top += top_step
+
+        # Display image.
+        self.display.image(self.image)
+        self.display.display()
+        time.sleep(.1)
+
+    def display_show_stats(self, status, day_count, progress_percentage, humidity, temperature, fan_speed_percent,
+                           soil_moisture, water_level):
+        self.display_show_multiline_text([
+            "STATUS: {}".format(status),
+            "{temperature}C   {humidity}%".format(temperature=temperature, humidity=humidity),
+            "Fan speed: {}%".format(fan_speed_percent),
+            "Soil moisture: {}".format(soil_moisture),
+            "Water level: {}%".format(water_level),
+            "Grow day: {day_count} ({progress_percentage}%)".format(day_count=day_count,
+                                                                   progress_percentage=progress_percentage)
+        ])

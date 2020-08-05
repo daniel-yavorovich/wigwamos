@@ -10,11 +10,11 @@ class Light:
         # TODO: need to implement
         return True
 
-    def power_off(self):
+    def light_power_off(self):
         # TODO: need to implement
         return True
 
-    def power_on(self):
+    def light_power_on(self):
         # TODO: need to implement
         return True
 
@@ -24,7 +24,7 @@ class Light:
         :return: result
         """
         if not duration or duration <= 0:
-            return self.power_on()
+            return self.light_power_on()
 
         return True
 
@@ -34,6 +34,6 @@ class Light:
         :return: result
         """
         if not duration or duration <= 0:
-            return self.power_off()
+            return self.light_power_off()
 
         return True

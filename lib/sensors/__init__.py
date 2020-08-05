@@ -10,4 +10,4 @@ class Sensors:
 
     def get_sensors_data(self):
         humidity, temperature = Adafruit_DHT.read_retry(self.DHT_SENSOR, self.DHT_PIN)
-        return humidity, temperature
+        return round(humidity, 2), round(temperature, 2)

@@ -6,25 +6,34 @@ from lib.sensors import Sensors
 from lib.metrics import Metrics
 
 
-class WigWamOS(Fan, Growing, Light, Screen, Sensors, Metrics):
+class WigWamOS:
+    def __init__(self):
+        self.fan = Fan()
+        self.growing = Growing()
+        self.light = Light()
+        self.screen = Screen()
+        self.sensors = Sensors()
+        self.metrics = Metrics()
 
-    def microclimate_setting(self, humidity, temperature):
+    def adjust_fan(self, humidity, temperature):
         pass
 
-    def light_setting(self, is_day):
+    def adjust_light(self, is_day):
         pass
-
-    def update_metrics(self, day_count, humidity, temperature, fan_speed_percent):
-        self.save_metric('grow_days', day_count)
-        self.save_metric('humidity', humidity)
-        self.save_metric('temperature', temperature)
-        self.save_metric('fan_speed_percent', fan_speed_percent)
 
     def run(self):
-        day_count = self.get_day_count()
-        humidity, temperature = self.get_sensors_data()
-        fan_speed_percent = self.get_fan_speed_percent()
+        day_count = self.growing.get_day_count()
 
-        self.microclimate_setting(humidity, temperature)
-        self.light_setting(self.is_day)
-        self.update_metrics(day_count, humidity, temperature, fan_speed_percent)
+        humidity, temperature = self.sensors.get_sensors_data()
+        fan_speed_percent = self.fan.get_fan_speed_percent()
+        light_brightness_percent = self.light.get_light_brightness_percent()
+        soil_moisture = 'fine'  # TODO: need to implement
+        water_level = 100  # TODO: need to implement
+        progress_percentage = 1
+        status = 'fine'
+
+        self.adjust_fan(humidity, temperature)
+        self.adjust_light(self.growing.is_day)
+        self.metrics.update_metrics(day_count, humidity, temperature, fan_speed_percent, light_brightness_percent)
+
+        self.screen.display_show_stats(status, day_count, progress_percentage, humidity, temperature, fan_speed_percent, soil_moisture, water_level)

@@ -1,1 +1,2 @@
-Adafruit_DHT
+Adafruit-DHT==1.4.0
+Adafruit-SSD1306==1.6.2
