@@ -62,14 +62,21 @@ class Screen:
         self.display.display()
         time.sleep(.1)
 
-    def display_show_stats(self, status, day_count, progress_percentage, humidity, temperature, fan_speed_percent,
-                           soil_moisture, water_level):
-        self.display_show_multiline_text([
-            "STATUS: {}".format(status),
+    def display_show_stats(self, alerts, day_count, progress_percentage, humidity, temperature, fan_speed_percent):
+        lines = []
+
+        if not alerts:
+            lines += ['All is fine', '']
+        elif len(alerts) == 1:
+            lines += [alerts[0], '']
+        else:
+            lines = alerts
+
+        lines += [
             "{temperature}C   {humidity}%".format(temperature=temperature, humidity=humidity),
             "Fan speed: {}%".format(fan_speed_percent),
-            "Soil moisture: {}".format(soil_moisture),
-            "Water level: {}%".format(water_level),
             "Grow day: {day_count} ({progress_percentage}%)".format(day_count=day_count,
-                                                                   progress_percentage=progress_percentage)
-        ])
+                                                                    progress_percentage=progress_percentage)
+        ]
+
+        self.display_show_multiline_text(lines)

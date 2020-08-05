@@ -7,8 +7,10 @@ from wwos import WigWamOS
 
 def main(w):
     while True:
-        logging.info('Starting...')
-        w.run()
+        stats = w.run()
+        logging.info(
+            'Stats: day {} / humidity {}% / temperature {}C / fan speed {}% / light brightness {}%'.format(
+                stats[0], stats[1], stats[2], stats[3], stats[4]))
         time.sleep(settings.RUN_INTERVAL)
 
 
