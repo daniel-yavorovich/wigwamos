@@ -18,7 +18,6 @@ Automatize grooving process
 * control fan (https://xn----itbbja1ajgfecfvb9m.xn--p1ai/raznoe/optimalnaya-temperatura-v-groubokse-d-2kanna-biz-502-bad-gateway.html#i)
 
 ## Programs
-
 * metrics storage: every 10 sec
 * light control: every 1 min
     + on/off
@@ -39,3 +38,16 @@ Get data from sensors/db for metrics:
 * PI CPU temperature
 * Light brightness
 * Fan speed
+
+### Light control
+Control light, based on growing process
+
+* On/off
+* Brightness, based on sunrise/sunset
+
+### Growing control
+
+* Set start growing day
+* Get growing day
+* Get progress in %
+

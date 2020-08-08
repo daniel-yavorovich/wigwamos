@@ -8,7 +8,7 @@ from lib.properties import Property
 from lib.growing import Growing
 from lib.light import Light
 from lib.sensors import Sensors
-from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL
+from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL
 from prometheus_client import start_http_server, Gauge
 
 # Prometheus metrics
@@ -74,6 +74,14 @@ def update_metrics():
     logging.info('Prometheus metrics updated')
 
 
+def light_control():
+    if not is_need_start(LIGHT_CONTROL, LIGHT_CONTROL_INTERVAL):
+        return False
+
+    # light_brightness = growing.
+    # light.set_light_brightness(light_brightness)
+
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
@@ -88,5 +96,6 @@ if __name__ == '__main__':
 
     while True:
         update_metrics()
+        light_control()
 
         time.sleep(EXPORTER_UPDATE_INTERVAL)

@@ -21,8 +21,26 @@ After first boot please configure:
 
 ## Install depends
     
-    sudo apt-get install python3-dev python3-pip libopenjp2-7 libtiff5 libleveldb-dev
+    sudo apt-get install python3-dev python3-pip libopenjp2-7 libtiff5 libleveldb-dev supervisor
     sudo python3 -m pip install --upgrade pip setuptools wheel
+    
+## Configure supervisor
+    
+    systemctl enable supervisor
+    tee /etc/supervisor/conf.d/wigwamos.conf << EOF
+    [program:wigwamos]
+    command=/home/pi/wigwamos/run.py
+    directory=/home/pi/wigwamos/
+    autostart=true
+    autorestart=true
+    stdout_logfile=/var/log/wigwamos.log
+    stderr_logfile=/var/log/wigwamos.log
+    stdout_logfile_maxbytes=1MB
+    stdout_logfile_backups=10
+    stderr_logfile_maxbytes=1MB
+    stderr_logfile_backups=10
+    EOF
+    systemctl reload supervisor
 
 ## Enable I2C
 
