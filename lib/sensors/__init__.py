@@ -16,6 +16,8 @@ class Sensors:
     RANGING_MODULE_ECHO_PIN = 27
 
     def __init__(self):
+        GPIO.setwarnings(False)
+
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.SOIL_MOISTURE_PIN, GPIO.IN)
 
