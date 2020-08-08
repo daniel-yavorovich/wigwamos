@@ -29,8 +29,8 @@ class WigWamOS:
         need_watering = self.sensors.is_need_watering()
         fan_speed_percent = self.fan.get_fan_speed_percent()
         light_brightness_percent = self.light.get_light_brightness_percent()
+        water_level = self.sensors.get_water_level()
 
-        water_level = 100  # TODO: need to implement
         progress_percent = 1  # TODO: need to implement
         status = 'fine'  # TODO: need to implement
 
@@ -41,6 +41,6 @@ class WigWamOS:
         if need_watering:
             alerts.append("NEED WATERING!")
 
-        self.screen.display_show_stats(alerts, day_count, progress_percent, humidity, temperature, fan_speed_percent)
+        self.screen.display_show_stats(alerts, day_count, progress_percent, humidity, temperature, fan_speed_percent, water_level)
 
         return [day_count, humidity, temperature, fan_speed_percent, light_brightness_percent]

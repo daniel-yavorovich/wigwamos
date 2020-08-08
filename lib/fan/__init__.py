@@ -1,3 +1,5 @@
+from lib.waveshare_2_CH_SCR_HAL import SCR
+
 class Fan:
     def __init__(self):
         pass

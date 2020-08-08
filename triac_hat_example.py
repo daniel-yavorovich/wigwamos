@@ -1,16 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-import os
-import sys
 import logging
 import time
-
-logging.basicConfig(level=logging.INFO)
-libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
-if os.path.exists(libdir):
-    sys.path.append(libdir)
-
-from waveshare_2_CH_SCR_HAL import SCR
+from lib.waveshare_2_CH_SCR_HAL import SCR
 
 # scr = SCR.SCR(dev = "/dev/ttySC0",data_mode = 1)
 scr = SCR.SCR(data_mode=0)  # 0:I2C  1: UART
