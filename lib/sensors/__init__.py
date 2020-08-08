@@ -2,6 +2,7 @@ import time
 
 import Adafruit_DHT
 import RPi.GPIO as GPIO
+from settings import BOTTLE_HEIGHT
 
 
 class Sensors:
@@ -11,8 +12,6 @@ class Sensors:
     SOIL_MOISTURE_PIN = 21
     RANGING_MODULE_TRIGGER_PIN = 22
     RANGING_MODULE_ECHO_PIN = 27
-
-    BOTTLE_HEIGHT = 23.6
 
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
@@ -68,6 +67,6 @@ class Sensors:
         if distance_to_water > 1000:
             distance_to_water = 0
 
-        result = 100 - (distance_to_water / self.BOTTLE_HEIGHT * 100)
+        result = 100 - (distance_to_water / BOTTLE_HEIGHT * 100)
 
         return round(result, 2)
