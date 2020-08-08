@@ -25,8 +25,12 @@ class Sensors:
         humidity, temperature = Adafruit_DHT.read_retry(self.DHT_SENSOR, self.DHT_PIN)
         return round(humidity, 2), round(temperature, 2)
 
-    def is_need_watering(self):
-        return bool(GPIO.input(self.SOIL_MOISTURE_PIN))
+    def get_soil_moisture(self):
+        """
+        0: all is well
+        1: need watering!
+        """
+        return GPIO.input(self.SOIL_MOISTURE_PIN)
 
     def get_distance(self):
         # set Trigger to HIGH

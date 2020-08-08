@@ -1,10 +1,7 @@
-from prometheus_client import start_http_server, Gauge
 import time
-
 from lib.sensors import Sensors
-
-EXPORTER_SERVER_PORT = 8000
-RUN_INTERVAL = 10
+from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT
+from prometheus_client import start_http_server, Gauge
 
 AIR_TEMPERATURE = Gauge('air_temperature', 'Air temperature')
 AIR_HUMIDITY = Gauge('air_humidity', 'Air humidity')
@@ -17,14 +14,16 @@ FAN_SPEED = Gauge('fan_speed', 'Fan speed')
 
 if __name__ == '__main__':
     sensors = Sensors()
-
     start_http_server(EXPORTER_SERVER_PORT)
+
     while True:
         # Get metrics
         humidity, temperature = sensors.get_humidity_temperature()
+        soil_moisture = sensors.get_soil_moisture()
 
         # Update metrics in exporter
         AIR_HUMIDITY.set(humidity)
         AIR_TEMPERATURE.set(temperature)
+        SOIL_MOISTURE.set(soil_moisture)
 
-        time.sleep(RUN_INTERVAL)
+        time.sleep(EXPORTER_UPDATE_INTERVAL)
