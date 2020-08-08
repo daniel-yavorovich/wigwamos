@@ -1,17 +1,26 @@
-from lib.waveshare_2_CH_SCR_HAL import SCR
+from ..triac_hat import TriacHat
 
 
 class Fan:
-    def __init__(self):
-        pass
+    FAN_TRIAC_HAT_CHANNEL = 1
+    FAN_SPEED_PROPERTY_KEY = 'fan_speed'
 
-    def get_fan_speed_percent(self):
-        # TODO: need to implement
-        return 100
+    def __init__(self, prop):
+        self.prop = prop
+        self.triac_hat = TriacHat()
 
-    def set_fan_speed_percent(self, value):
-        # TODO: need to implement
-        return True
+        self.prop.set_property(self.FAN_SPEED_PROPERTY_KEY, '0')
 
-    def adjust_fan(self, humidity, temperature):
-        pass
+    def get_fan_speed(self):
+        return int(self.prop.get_property_value(self.FAN_SPEED_PROPERTY_KEY))
+
+    def set_fan_speed(self, value):
+        self.prop.set_property(self.FAN_SPEED_PROPERTY_KEY, str(value))
+
+        if value == 0:
+            self.triac_hat.disable_channel(self.FAN_TRIAC_HAT_CHANNEL)
+            return
+
+        self.triac_hat.change_voltage(self.FAN_TRIAC_HAT_CHANNEL, value)
+
+        self.triac_hat.enable_channel(self.FAN_TRIAC_HAT_CHANNEL)
