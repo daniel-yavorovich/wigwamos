@@ -1,6 +1,8 @@
 import time
 
+from lib.properties import Property
 from lib.growing import Growing
+from lib.light import Light
 from lib.sensors import Sensors
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT
 from prometheus_client import start_http_server, Gauge
@@ -15,8 +17,10 @@ LIGHT_BRIGHTNESS = Gauge('light_brightness', 'Light brightness')
 FAN_SPEED = Gauge('fan_speed', 'Fan speed')
 
 if __name__ == '__main__':
+    prop = Property()
     sensors = Sensors()
-    growing = Growing()
+    growing = Growing(prop)
+    light = Light(prop)
     start_http_server(EXPORTER_SERVER_PORT)
 
     while True:
@@ -26,6 +30,7 @@ if __name__ == '__main__':
         grow_days = growing.get_growing_day_count()
         water_level = sensors.get_water_level()
         pi_temperature = sensors.get_pi_temperature()
+        light_brightness = light.get_light_brightness()
 
         # Update metrics in exporter
         AIR_HUMIDITY.set(humidity)
@@ -34,5 +39,6 @@ if __name__ == '__main__':
         GROW_DAYS.set(grow_days)
         WATER_LEVEL.set(water_level)
         PI_TEMPERATURE.set(pi_temperature)
+        LIGHT_BRIGHTNESS.set(light_brightness)
 
         time.sleep(EXPORTER_UPDATE_INTERVAL)

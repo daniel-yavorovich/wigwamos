@@ -1,20 +1,22 @@
 import datetime
-from ..properties import Property
 
 
-class Growing(Property):
+class Growing:
     START_GROWING_PROPERTY_KEY = 'start_growing_timestamp'
 
+    def __init__(self, prop):
+        self.prop = prop
+
     def reset_day_counter(self):
-        return self.set_property(self.START_GROWING_PROPERTY_KEY, str(datetime.datetime.now().timestamp()))
+        return self.prop.set_property(self.START_GROWING_PROPERTY_KEY, str(datetime.datetime.now().timestamp()))
 
     def get_start_growing_date(self):
-        start_timestamp = self.get_property_value(self.START_GROWING_PROPERTY_KEY)
+        start_timestamp = self.prop.get_property_value(self.START_GROWING_PROPERTY_KEY)
         if not start_timestamp:
             self.reset_day_counter()
-            start_timestamp = self.get_property_value(self.START_GROWING_PROPERTY_KEY)
+            start_timestamp = self.prop.get_property_value(self.START_GROWING_PROPERTY_KEY)
 
-        return datetime.datetime.fromtimestamp(float(self.get_property_value(self.START_GROWING_PROPERTY_KEY)))
+        return datetime.datetime.fromtimestamp(float(self.prop.get_property_value(self.START_GROWING_PROPERTY_KEY)))
 
     def get_growing_day_count(self):
         return (datetime.datetime.now() - self.get_start_growing_date()).days
