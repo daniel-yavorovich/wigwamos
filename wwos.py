@@ -41,6 +41,7 @@ class WigWamOS:
         if need_watering:
             alerts.append("NEED WATERING!")
 
-        self.screen.display_show_stats(alerts, day_count, progress_percent, humidity, temperature, fan_speed_percent, water_level)
+        # Display show stats by default
+        # self.screen.display_show_stats(alerts, day_count, progress_percent, humidity, temperature, fan_speed_percent, water_level)
 
         return [day_count, humidity, temperature, fan_speed_percent, light_brightness_percent]

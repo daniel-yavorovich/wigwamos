@@ -20,6 +20,7 @@ After first boot please configure:
 * SSH enable
 
 ## Install depends
+    
     sudo apt-get install python3-dev python3-pip libopenjp2-7 libtiff5
     sudo python3 -m pip install --upgrade pip setuptools wheel
 
@@ -27,20 +28,13 @@ After first boot please configure:
 
     sudo raspi-config
 
-## Configure UART
 
-https://www.raspberrypi.org/documentation/configuration/uart.md
+# Monitoring
 
-
-on the command line, then use the arrow keys to select 'Interfacing Options' and 'I2C' to tell the RasPi to enable the I2C interface. Then select 'Finish' and reboot the RasPi.
-
-## Install WiringPi libs
-
-    sudo apt-get install wiringpi
-
-    #For Pi 4, you need to update it：
+    sudo apt-get install -y adduser libfontconfig1 prometheus
     cd /tmp
-    wget https://project-downloads.drogon.net/wiringpi-latest.deb
-    sudo dpkg -i wiringpi-latest.deb
-    gpio -v
-    #You will get 2.52 information if you install it correctly
+    wget https://dl.grafana.com/oss/release/grafana_7.1.3_armhf.deb
+    sudo dpkg -i grafana_7.1.3_armhf.deb
+    sudo /bin/systemctl daemon-reload
+    sudo /bin/systemctl enable grafana-server
+    sudo /bin/systemctl start grafana-server
