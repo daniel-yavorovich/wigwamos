@@ -1,5 +1,5 @@
-import logging
 import time
+import logging
 
 from lib.fan import Fan
 from lib.properties import Property

@@ -1,5 +1,3 @@
-import time
-
 from ..waveshare_2_CH_SCR_HAL import SCR
 
 
