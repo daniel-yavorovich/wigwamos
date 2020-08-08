@@ -37,3 +37,6 @@ class Light:
             return self.light_power_off()
 
         return True
+
+    def adjust_light(self, is_day):
+        pass

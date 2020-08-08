@@ -1,5 +1,6 @@
 from lib.waveshare_2_CH_SCR_HAL import SCR
 
+
 class Fan:
     def __init__(self):
         pass
@@ -11,3 +12,6 @@ class Fan:
     def set_fan_speed_percent(self, value):
         # TODO: need to implement
         return True
+
+    def adjust_fan(self, humidity, temperature):
+        pass

@@ -15,14 +15,9 @@ class WigWamOS:
         self.sensors = Sensors()
         self.metrics = Metrics()
 
-    def adjust_fan(self, humidity, temperature):
-        pass
-
-    def adjust_light(self, is_day):
-        pass
-
     def run(self):
         alerts = []
+
         day_count = self.growing.get_day_count()
 
         humidity, temperature = self.sensors.get_humidity_temperature()
@@ -34,14 +29,14 @@ class WigWamOS:
         progress_percent = 1  # TODO: need to implement
         status = 'fine'  # TODO: need to implement
 
-        self.adjust_fan(humidity, temperature)
-        self.adjust_light(self.growing.is_day)
+        self.fan.adjust_fan(humidity, temperature)
+        self.light.adjust_light(self.growing.is_day)
         self.metrics.update_metrics(day_count, humidity, temperature, fan_speed_percent, light_brightness_percent)
 
         if need_watering:
             alerts.append("NEED WATERING!")
 
         # Display show stats by default
-        # self.screen.display_show_stats(alerts, day_count, progress_percent, humidity, temperature, fan_speed_percent, water_level)
+        self.screen.display_show_stats(alerts, day_count, progress_percent, humidity, temperature, fan_speed_percent, water_level)
 
         return [day_count, humidity, temperature, fan_speed_percent, light_brightness_percent]

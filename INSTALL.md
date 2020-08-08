@@ -32,9 +32,22 @@ After first boot please configure:
 # Monitoring
 
     sudo apt-get install -y adduser libfontconfig1 prometheus
+    
     cd /tmp
     wget https://dl.grafana.com/oss/release/grafana_7.1.3_armhf.deb
     sudo dpkg -i grafana_7.1.3_armhf.deb
+    
     sudo /bin/systemctl daemon-reload
     sudo /bin/systemctl enable grafana-server
     sudo /bin/systemctl start grafana-server
+    
+    cp /etc/prometheus/prometheus.yml /etc/prometheus/prometheus.yml.orig
+    tee -a /etc/prometheus/prometheus.yml << EOF
+    
+      - job_name: wigwamos
+        scrape_interval: 5s
+        scrape_timeout: 5s
+        static_configs:
+          - targets: ['localhost:8000']
+    EOF
+    systemctl restart prometheus.service

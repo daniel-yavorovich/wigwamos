@@ -2,3 +2,4 @@ Adafruit-DHT==1.4.0
 Adafruit-SSD1306==1.6.2
 Adafruit_BBIO==1.2.0
 Pillow==7.2.0
+prometheus-client==0.8.0
