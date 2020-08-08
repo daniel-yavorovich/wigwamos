@@ -1,3 +1,5 @@
+import os
+import re
 import time
 
 import Adafruit_DHT
@@ -70,3 +72,7 @@ class Sensors:
         result = 100 - (distance_to_water / BOTTLE_HEIGHT * 100)
 
         return round(result, 2)
+
+    def get_pi_temperature(self):
+        temp = os.popen("vcgencmd measure_temp").readline()
+        return float(re.search(r'temp=(\d+\.\d+)\'C\n', temp).group(1))

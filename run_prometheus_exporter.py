@@ -25,6 +25,7 @@ if __name__ == '__main__':
         soil_moisture = sensors.get_soil_moisture()
         grow_days = growing.get_growing_day_count()
         water_level = sensors.get_water_level()
+        pi_temperature = sensors.get_pi_temperature()
 
         # Update metrics in exporter
         AIR_HUMIDITY.set(humidity)
@@ -32,5 +33,6 @@ if __name__ == '__main__':
         SOIL_MOISTURE.set(soil_moisture)
         GROW_DAYS.set(grow_days)
         WATER_LEVEL.set(water_level)
+        PI_TEMPERATURE.set(pi_temperature)
 
         time.sleep(EXPORTER_UPDATE_INTERVAL)
