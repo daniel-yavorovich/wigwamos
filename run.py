@@ -99,6 +99,10 @@ def fan_control():
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
+    logging.info('Waiting 30 sec before start for loading Triac HAT module...')
+    time.sleep(30)
+    logging.info('Starting...')
+
     prop = Property()
     relays = Relays()
     triac_hat = TriacHat()
