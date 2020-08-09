@@ -1,3 +1,4 @@
+import logging
 import re
 import datetime
 from .models import Config, Period
@@ -52,6 +53,10 @@ class Growing(Property):
         name = data.get('name')
 
         self.__validate_config_name(name)
+
+        if self.get_config(name):
+            logging.warning('Config "{}" already imported'.format(name))
+            return None
 
         config = Config.create(name=name)
 
