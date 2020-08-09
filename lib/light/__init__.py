@@ -34,6 +34,11 @@ class Light(Property):
         if not period.sunrise_start and not period.sunrise_start and not period.sunrise_start and not period.sunrise_start:
             return True
 
+    def __get_time_diff(self, time_from, time_to):
+        today = datetime.date.today()
+        result = datetime.datetime.combine(today, time_to) - datetime.datetime.combine(today, time_from)
+        return result.seconds
+
     def adjust_light(self, period):
         if self.is_not_light(period):
             self.light_power_off()
@@ -42,6 +47,8 @@ class Light(Property):
         now = datetime.datetime.now().time()
 
         if period.sunrise_start <= now <= period.sunset_start:
+            total_sunrise_seconds = self.__get_time_diff(period.sunrise_start, period.sunrise_stop)
+            seconds_from_sunrise_start = self.__get_time_diff(period.sunrise_start, now)
             self.light_power_on()
         elif period.sunset_stop <= now <= period.sunrise_start:
             self.light_power_off()
