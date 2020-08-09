@@ -7,9 +7,11 @@ from lib.fan import Fan
 from lib.properties import Property
 from lib.growing import Growing
 from lib.light import Light
+from lib.relays import Relays
 from lib.sensors import Sensors
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL
 from prometheus_client import start_http_server, Gauge
+from syncdb import sync_database
 
 # Prometheus metrics
 AIR_TEMPERATURE = Gauge('air_temperature', 'Air temperature')
@@ -85,14 +87,18 @@ def light_control():
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
+    relays = Relays()
     prop = Property()
     sensors = Sensors()
-    growing = Growing(prop)
-    light = Light(prop)
+    growing = Growing()
+    light = Light(relays)
     fan = Fan(prop)
 
     start_http_server(EXPORTER_SERVER_PORT)
     logging.info('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
+
+    # Sync database model
+    sync_database()
 
     while True:
         update_metrics()

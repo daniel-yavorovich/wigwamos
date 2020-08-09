@@ -1,7 +1,5 @@
-from settings import SQLITE_DATABASE
+from lib.db import db
 from peewee import *
-
-db = SqliteDatabase(SQLITE_DATABASE)
 
 
 class Config(Model):
