@@ -94,7 +94,7 @@ if __name__ == '__main__':
     sensors = Sensors()
     growing = Growing()
     light = Light(relays)
-    fan = Fan(prop)
+    fan = Fan()
 
     start_http_server(EXPORTER_SERVER_PORT)
     logging.info('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
