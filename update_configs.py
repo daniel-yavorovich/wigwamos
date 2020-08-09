@@ -14,11 +14,18 @@ CONFIG_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 
 
 
 def update_configs():
+    config_names = []
+
     for c in os.listdir(CONFIG_PATH):
         with open(os.path.join(CONFIG_PATH, c)) as cf:
             model = growing.config_dict_to_model(json.load(cf))
             growing.create_config(model)
+            config_names.append(model.name)
             logging.info('Config "{}" loaded'.format(model.name))
+
+    growing.update_configs_list(config_names)
+
+    logging.info('Load {} configs'.format(len(config_names)))
 
 
 if __name__ == '__main__':

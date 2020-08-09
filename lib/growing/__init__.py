@@ -1,10 +1,14 @@
 import re
 import json
 import datetime
-from .models import Config
+from .models import Config, Period
 
 
 class InvalidConfigName(Exception):
+    pass
+
+
+class ConfigNotFound(Exception):
     pass
 
 
@@ -56,3 +60,26 @@ class Growing:
         if not data:
             return None
         return self.config_dict_to_model(json.loads(data))
+
+    def update_configs_list(self, names):
+        self.prop.set_property('CONFIGS_LIST', json.dumps(names))
+
+    def get_configs_list(self):
+        data = self.prop.get_property_value('CONFIGS_LIST')
+        if not data:
+            return []
+        return json.loads(data)
+
+    def set_current_config(self, name):
+        self.__validate_config_name(name)
+        if name not in self.get_configs_list():
+            raise ConfigNotFound("Config {} not found".format(name))
+
+        self.prop.set_property('CURRENT_CONFIG', name)
+
+    def get_current_config_name(self):
+        return self.prop.get_property_value('CURRENT_CONFIG')
+
+    def get_current_config(self):
+        name = self.get_current_config_name()
+        return self.get_config(name)

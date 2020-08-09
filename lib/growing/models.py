@@ -1,22 +1,28 @@
-from dataclasses import dataclass
-from typing import List
+from settings import SQLITE_DATABASE
+from peewee import *
+
+db = SqliteDatabase(SQLITE_DATABASE)
 
 
-@dataclass
-class Period:
-    name: str
-    day_from: int
-    day_to: int
-    temperature: float
-    humidity: float
-    sunrise_start: str
-    sunrise_stop: str
-    sunset_start: str
-    sunset_stop: str
-    red_spectrum: bool
+class Config(Model):
+    name = CharField()
+
+    class Meta:
+        database = db
 
 
-@dataclass
-class Config:
-    name: str
-    periods: List[Period]
+class Period(Model):
+    name = CharField()
+    period = ForeignKeyField(Config, backref='periods')
+    day_from = IntegerField()
+    day_to = IntegerField()
+    temperature = FloatField()
+    humidity = FloatField()
+    sunrise_start = TimeField()
+    sunrise_stop = TimeField()
+    sunset_start = TimeField()
+    sunset_stop = TimeField()
+    red_spectrum = BooleanField()
+
+    class Meta:
+        database = db
