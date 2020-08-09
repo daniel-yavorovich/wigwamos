@@ -15,6 +15,7 @@ class ConfigNotFound(Exception):
 class Growing(Property):
     START_GROWING_PROPERTY_KEY = 'start_growing_timestamp'
     CURRENT_GROWING_CONFIG_NAME = 'CURRENT_GROWING_CONFIG_NAME'
+    DEFAULT_CONFIG_NAME = 'Autoflowering'
 
     def reset_day_counter(self):
         now = datetime.datetime.now()
@@ -73,7 +74,12 @@ class Growing(Property):
         self.set_property(self.CURRENT_GROWING_CONFIG_NAME, name)
 
     def get_current_config_name(self):
-        return self.get_property_value(self.CURRENT_GROWING_CONFIG_NAME)
+        name = self.get_property_value(self.CURRENT_GROWING_CONFIG_NAME)
+        if not name:
+            self.set_current_config(self.DEFAULT_CONFIG_NAME)
+            name = self.DEFAULT_CONFIG_NAME
+
+        return name
 
     def get_current_config(self):
         return self.get_config(self.get_current_config_name())
