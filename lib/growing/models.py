@@ -11,13 +11,13 @@ class Period(BaseModel):
     config = ForeignKeyField(Config, backref='periods')
     day_from = IntegerField()
     day_to = IntegerField()
-    temperature = FloatField()
-    humidity = FloatField()
-    sunrise_start = TimeField()
-    sunrise_stop = TimeField()
-    sunset_start = TimeField()
-    sunset_stop = TimeField()
-    red_spectrum = BooleanField()
+    temperature = FloatField(default=25)
+    humidity = FloatField(default=65)
+    sunrise_start = TimeField(null=True)
+    sunrise_stop = TimeField(null=True)
+    sunset_start = TimeField(null=True)
+    sunset_stop = TimeField(null=True)
+    red_spectrum = BooleanField(default=False)
 
     class Meta:
         indexes = (

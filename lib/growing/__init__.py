@@ -31,12 +31,7 @@ class Growing(Property):
         return datetime.datetime.fromtimestamp(float(self.get_property_value(self.START_GROWING_PROPERTY_KEY)))
 
     def get_growing_day_count(self):
-        return (datetime.datetime.now() - self.get_start_growing_date()).days
-
-    @property
-    def is_day(self):
-        # TODO: need implement
-        return True
+        return (datetime.datetime.now() - self.get_start_growing_date()).days + 1
 
     def __validate_config_name(self, name):
         pattern = re.compile(r'[A-Za-z0-9]+')
@@ -66,7 +61,10 @@ class Growing(Property):
         return config
 
     def get_config(self, name):
-        return Config.get(name=name)
+        try:
+            return Config.get(name=name)
+        except Config.DoesNotExist:
+            return None
 
     def get_config_names(self):
         return [c.name for c in Config.select()]
@@ -88,3 +86,8 @@ class Growing(Property):
 
     def get_current_config(self):
         return self.get_config(self.get_current_config_name())
+
+    def get_current_period(self):
+        config = self.get_current_config()
+        day_count = self.get_growing_day_count()
+        return config.periods.select().where(Period.day_from <= day_count, Period.day_to >= day_count).get()

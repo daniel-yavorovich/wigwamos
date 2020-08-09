@@ -7,10 +7,10 @@
       "day_to": 7,
       "temperature": 24.0,
       "humidity": 70,
-      "sunrise_start": "",
-      "sunrise_stop": "",
-      "sunset_start": "",
-      "sunset_stop": "",
+      "sunrise_start": null,
+      "sunrise_stop": null,
+      "sunset_start": null,
+      "sunset_stop": null,
       "red_spectrum": false
     },
     {
