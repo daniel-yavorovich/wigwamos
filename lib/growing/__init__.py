@@ -1,4 +1,11 @@
+import re
+import json
 import datetime
+from .models import Config
+
+
+class InvalidConfigName(Exception):
+    pass
 
 
 class Growing:
@@ -25,3 +32,27 @@ class Growing:
     def is_day(self):
         # TODO: need implement
         return True
+
+    def __validate_config_name(self, name):
+        pattern = re.compile(r'[A-Za-z0-9]+')
+        if not pattern.fullmatch(name):
+            raise InvalidConfigName
+
+    def __get_prop_name(self, name):
+        return 'CONFIG_{}'.format(name)
+
+    def config_dict_to_model(self, data):
+        return Config(**data)
+
+    def model_to_dict(self, model):
+        return model.__dict__
+
+    def create_config(self, model):
+        self.__validate_config_name(model.name)
+        self.prop.set_property(self.__get_prop_name(model.name), json.dumps(self.model_to_dict(model)))
+
+    def get_config(self, name):
+        data = self.prop.get_property_value(self.__get_prop_name(name))
+        if not data:
+            return None
+        return self.config_dict_to_model(json.loads(data))

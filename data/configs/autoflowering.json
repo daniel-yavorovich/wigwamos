@@ -1,0 +1,41 @@
+{
+  "name": "Autoflowering",
+  "periods": [
+    {
+      "name": "Seed germination",
+      "day_from": 1,
+      "day_to": 7,
+      "temperature": 24.0,
+      "humidity": 70,
+      "sunrise_start": "",
+      "sunrise_stop": "",
+      "sunset_start": "",
+      "sunset_stop": "",
+      "red_spectrum": false
+    },
+    {
+      "name": "Vegetative",
+      "day_from": 8,
+      "day_to": 38,
+      "temperature": 26.0,
+      "humidity": 70,
+      "sunrise_start": "05:30",
+      "sunrise_stop": "06:00",
+      "sunset_start": "21:30",
+      "sunset_stop": "22:00",
+      "red_spectrum": false
+    },
+    {
+      "name": "Flowering",
+      "day_from": 39,
+      "day_to": 70,
+      "temperature": 25.0,
+      "humidity": 65,
+      "sunrise_start": "05:30",
+      "sunrise_stop": "06:00",
+      "sunset_start": "17:30",
+      "sunset_stop": "18:00",
+      "red_spectrum": true
+    }
+  ]
+}
