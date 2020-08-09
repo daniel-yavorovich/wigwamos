@@ -40,6 +40,8 @@ class Light(Property):
         return result.seconds
 
     def adjust_light(self, period):
+        light_brightness = 0
+
         if self.is_not_light(period):
             self.light_power_off()
             return
@@ -47,8 +49,18 @@ class Light(Property):
         now = datetime.datetime.now().time()
 
         if period.sunrise_start <= now <= period.sunset_start:
-            total_sunrise_seconds = self.__get_time_diff(period.sunrise_start, period.sunrise_stop)
-            seconds_from_sunrise_start = self.__get_time_diff(period.sunrise_start, now)
-            self.light_power_on()
-        elif period.sunset_stop <= now <= period.sunrise_start:
-            self.light_power_off()
+            if now < period.sunrise_stop:
+                total_sunrise_seconds = self.__get_time_diff(period.sunrise_start, period.sunrise_stop)
+                seconds_from_sunrise_start = self.__get_time_diff(period.sunrise_start, now)
+                light_brightness = 100 * seconds_from_sunrise_start / total_sunrise_seconds
+            else:
+                light_brightness = 100
+        elif period.sunset_start <= now <= period.sunrise_start:
+            if now < period.sunset_stop:
+                total_sunset_seconds = self.__get_time_diff(period.sunset_start, period.sunset_stop)
+                seconds_from_sunset_start = self.__get_time_diff(period.sunset_start, now)
+                light_brightness = (-100 * seconds_from_sunset_start / total_sunset_seconds) + 100
+            else:
+                light_brightness = 0
+
+        self.set_light_brightness(light_brightness)
