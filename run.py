@@ -9,7 +9,9 @@ from lib.growing import Growing
 from lib.light import Light
 from lib.relays import Relays
 from lib.sensors import Sensors
-from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, RUN_INTERVAL
+from lib.triac_hat import TriacHat
+from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
+    FAN_CONTROL_INTERVAL, RUN_INTERVAL
 from prometheus_client import start_http_server, Gauge
 
 # Prometheus metrics
@@ -25,13 +27,15 @@ FAN_SPEED = Gauge('fan_speed', 'Fan speed')
 # Services
 UPDATE_METRICS = 'update_metrics'
 LIGHT_CONTROL = 'light_control'
-CLIMATE_CONTROL = 'climate_control'
+FAN_CONTROL = 'fan_control'
+HUMIDITY_CONTROL = 'humidity_control'
 SOIL_MOISTURE_CONTROL = 'soil_moisture_control'
 
 LAST_EXECUTION_TIME = {
     UPDATE_METRICS: None,
     LIGHT_CONTROL: None,
-    CLIMATE_CONTROL: None,
+    FAN_CONTROL: None,
+    HUMIDITY_CONTROL: None,
     SOIL_MOISTURE_CONTROL: None,
 }
 
@@ -82,19 +86,26 @@ def light_control():
     light.adjust_light(period)
     logging.info('Light adjusted')
 
-    # light_brightness = growing.
-    # light.set_light_brightness(light_brightness)
+
+def fan_control():
+    if not is_need_start(FAN_CONTROL, FAN_CONTROL_INTERVAL):
+        return False
+
+    humidity, temperature = sensors.get_humidity_temperature()
+    fan.adjust_fan(humidity, temperature)
+    logging.info('Fan adjusted')
 
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
     relays = Relays()
+    triac_hat = TriacHat()
     prop = Property()
     sensors = Sensors()
     growing = Growing()
     light = Light(relays)
-    fan = Fan()
+    fan = Fan(triac_hat)
 
     start_http_server(EXPORTER_SERVER_PORT)
     logging.info('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
@@ -104,5 +115,6 @@ if __name__ == '__main__':
 
         update_metrics()
         light_control()
+        fan_control()
 
         time.sleep(RUN_INTERVAL)
