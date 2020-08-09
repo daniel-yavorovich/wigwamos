@@ -1,7 +1,7 @@
 import os
 
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
-SQLITE_DATABASE = os.environ.get('SQLITE_DATABASE', 'wigwamos.db')
+DATABASE = os.environ.get('DATABASE', 'sqlite:///wigwamos.db')
 EXPORTER_SERVER_PORT = int(os.environ.get('EXPORTER_SERVER_PORT', 8000))
 EXPORTER_UPDATE_INTERVAL = int(os.environ.get('EXPORTER_UPDATE_INTERVAL', 10))
 LIGHT_CONTROL_INTERVAL = int(os.environ.get('LIGHT_CONTROL_INTERVAL', 60))

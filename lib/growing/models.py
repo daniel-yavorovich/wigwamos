@@ -1,17 +1,14 @@
-from lib.db import db
+from lib.db import BaseModel
 from peewee import *
 
 
-class Config(Model):
+class Config(BaseModel):
+    name = CharField(unique=True)
+
+
+class Period(BaseModel):
     name = CharField()
-
-    class Meta:
-        database = db
-
-
-class Period(Model):
-    name = CharField()
-    period = ForeignKeyField(Config, backref='periods')
+    config = ForeignKeyField(Config, backref='periods')
     day_from = IntegerField()
     day_to = IntegerField()
     temperature = FloatField()
@@ -23,4 +20,6 @@ class Period(Model):
     red_spectrum = BooleanField()
 
     class Meta:
-        database = db
+        indexes = (
+            (('day_from', 'day_to'), True),
+        )

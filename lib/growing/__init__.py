@@ -1,5 +1,4 @@
 import re
-import json
 import datetime
 from .models import Config, Period
 from ..properties import Property
@@ -15,9 +14,11 @@ class ConfigNotFound(Exception):
 
 class Growing(Property):
     START_GROWING_PROPERTY_KEY = 'start_growing_timestamp'
+    CURRENT_GROWING_CONFIG_NAME = 'CURRENT_GROWING_CONFIG_NAME'
 
     def reset_day_counter(self):
-        return self.set_property(self.START_GROWING_PROPERTY_KEY, str(datetime.datetime.now().timestamp()))
+        now = datetime.datetime.now()
+        return self.set_property(self.START_GROWING_PROPERTY_KEY, str(now.timestamp()))
 
     def get_start_growing_date(self):
         start_timestamp = self.get_property_value(self.START_GROWING_PROPERTY_KEY)
@@ -37,11 +38,8 @@ class Growing(Property):
 
     def __validate_config_name(self, name):
         pattern = re.compile(r'[A-Za-z0-9]+')
-        if not pattern.fullmatch(name):
+        if not name or not pattern.fullmatch(name):
             raise InvalidConfigName
-
-    def __get_prop_name(self, name):
-        return 'CONFIG_{}'.format(name)
 
     def config_dict_to_model(self, data):
         return Config(**data)
@@ -49,35 +47,33 @@ class Growing(Property):
     def model_to_dict(self, model):
         return model.__dict__
 
-    def create_config(self, model):
-        self.__validate_config_name(model.name)
-        self.set_property(self.__get_prop_name(model.name), json.dumps(self.model_to_dict(model)))
+    def create_config(self, data):
+        name = data.get('name')
+
+        self.__validate_config_name(name)
+
+        config = Config.create(name=name)
+
+        for period_data in data['periods']:
+            Period.create(config=config, **period_data)
+
+        return config
 
     def get_config(self, name):
-        data = self.get_property_value(self.__get_prop_name(name))
-        if not data:
-            return None
-        return self.config_dict_to_model(json.loads(data))
+        return Config.get(name=name)
 
-    def update_configs_list(self, names):
-        self.set_property('CONFIGS_LIST', json.dumps(names))
-
-    def get_configs_list(self):
-        data = self.get_property_value('CONFIGS_LIST')
-        if not data:
-            return []
-        return json.loads(data)
+    def get_config_names(self):
+        return [c.name for c in Config.select()]
 
     def set_current_config(self, name):
         self.__validate_config_name(name)
-        if name not in self.get_configs_list():
+        if name not in self.get_config_names():
             raise ConfigNotFound("Config {} not found".format(name))
 
-        self.set_property('CURRENT_CONFIG', name)
+        self.set_property(self.CURRENT_GROWING_CONFIG_NAME, name)
 
     def get_current_config_name(self):
-        return self.get_property_value('CURRENT_CONFIG')
+        return self.get_property_value(self.CURRENT_GROWING_CONFIG_NAME)
 
     def get_current_config(self):
-        name = self.get_current_config_name()
-        return self.get_config(name)
+        return self.get_config(self.get_current_config_name())

@@ -17,7 +17,8 @@ After first boot please configure:
 * Reset password
 * Hostname
 * Network
-* SSH enable
+* Enable SSH
+* Enable I2C
 
 ## Install depends
     
@@ -42,10 +43,10 @@ After first boot please configure:
     EOF
     systemctl reload supervisor
 
-## Enable I2C
+## Init database
 
-    sudo raspi-config
-
+    cd /home/pi/wigwamos/
+    python init.py
 
 # Monitoring
 

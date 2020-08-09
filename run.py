@@ -80,6 +80,8 @@ def light_control():
     if not is_need_start(LIGHT_CONTROL, LIGHT_CONTROL_INTERVAL):
         return False
 
+    logging.info('Light adjusted')
+
     # light_brightness = growing.
     # light.set_light_brightness(light_brightness)
 
@@ -96,9 +98,6 @@ if __name__ == '__main__':
 
     start_http_server(EXPORTER_SERVER_PORT)
     logging.info('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
-
-    # Sync database model
-    sync_database()
 
     while True:
         update_metrics()

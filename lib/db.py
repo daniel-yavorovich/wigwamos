@@ -1,4 +1,10 @@
-from settings import SQLITE_DATABASE
-from peewee import SqliteDatabase
+from settings import DATABASE
+from playhouse.db_url import connect
+from peewee import Model
 
-db = SqliteDatabase(SQLITE_DATABASE)
+db = connect(DATABASE)
+
+
+class BaseModel(Model):
+    class Meta:
+        database = db
