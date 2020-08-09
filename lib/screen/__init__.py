@@ -1,9 +1,14 @@
 import time
 import Adafruit_SSD1306
+import RPi.GPIO as GPIO
 
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+
+from lib.fan import Fan
+from lib.growing import Growing
+from lib.sensors import Sensors
 
 
 class Screen:
@@ -16,6 +21,8 @@ class Screen:
     DC = 23
     SPI_PORT = 0
     SPI_DEVICE = 0
+
+    BUTTON_PIN = 29
 
     def __init__(self):
         self.display = Adafruit_SSD1306.SSD1306_128_64(rst=self.RST, i2c_address=self.I2C_ADDRESS)
@@ -62,23 +69,29 @@ class Screen:
         self.display.display()
         time.sleep(.1)
 
-    def display_show_stats(self, alerts, day_count, progress_percentage, humidity, temperature, fan_speed_percent,
-                           water_level):
-        lines = []
-
-        if not alerts:
-            lines += ['All is fine', '']
-        elif len(alerts) == 1:
-            lines += [alerts[0], '']
-        else:
-            lines = alerts
-
-        lines += [
-            "{temperature}C   {humidity}%".format(temperature=temperature, humidity=humidity),
-            "Fan speed: {}%".format(fan_speed_percent),
-            "Water level: {}%".format(water_level),
-            "Grow day: {day_count} ({progress_percentage}%)".format(day_count=day_count,
-                                                                    progress_percentage=progress_percentage)
-        ]
-
-        self.display_show_multiline_text(lines)
+    # def display_show_stats(self):
+    #     lines = []
+    #
+    #
+    #     if not alerts:
+    #         lines += ['All is fine', '']
+    #     elif len(alerts) == 1:
+    #         lines += [alerts[0], '']
+    #     else:
+    #         lines = alerts
+    #
+    #     lines += [
+    #         "{temperature}C   {humidity}%".format(temperature=temperature, humidity=humidity),
+    #         "Fan speed: {}%".format(fan_speed_percent),
+    #         "Water level: {}%".format(water_level),
+    #         "Grow day: {day_count} ({progress_percentage}%)".format(day_count=day_count,
+    #                                                                 progress_percentage=progress_percentage)
+    #     ]
+    #
+    #     self.display_show_multiline_text(lines)
+    #
+    # def init_button(self):
+    #     GPIO.setwarnings(False)
+    #     GPIO.setmode(GPIO.BOARD)
+    #     GPIO.setup(self.BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    #     GPIO.add_event_detect(10, GPIO.RISING, callback=self.display_show_stats)

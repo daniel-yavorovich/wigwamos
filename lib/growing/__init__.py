@@ -95,3 +95,7 @@ class Growing(Property):
         config = self.get_current_config()
         day_count = self.get_growing_day_count()
         return config.periods.select().where(Period.day_from <= day_count, Period.day_to >= day_count).get()
+
+    def get_growing_total_days(self):
+        config = self.get_current_config()
+        return config.periods.select().order_by('day_to')[-1].day_to
