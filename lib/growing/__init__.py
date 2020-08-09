@@ -19,8 +19,12 @@ class Growing(Property):
     DEFAULT_CONFIG_NAME = 'Autoflowering'
 
     def reset_day_counter(self):
-        now = datetime.datetime.now()
-        return self.set_property(self.START_GROWING_PROPERTY_KEY, str(now.timestamp()))
+        date = datetime.datetime.now()
+        return self.set_property(self.START_GROWING_PROPERTY_KEY, str(date.timestamp()))
+
+    def set_day_counter(self, day):
+        date = datetime.datetime.now() - datetime.timedelta(days=day)
+        return self.set_property(self.START_GROWING_PROPERTY_KEY, str(date.timestamp()))
 
     def get_start_growing_date(self):
         start_timestamp = self.get_property_value(self.START_GROWING_PROPERTY_KEY)

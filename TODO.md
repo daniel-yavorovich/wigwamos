@@ -11,6 +11,7 @@ Automatize grooving process
 * water level control
 * display stats on micro display
 * storage temperature and humidity metrics
+* alerts (using prometheus?) for send to telegram & show on display
 
 ## Details
 

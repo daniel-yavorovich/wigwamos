@@ -9,9 +9,8 @@ from lib.growing import Growing
 from lib.light import Light
 from lib.relays import Relays
 from lib.sensors import Sensors
-from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL
+from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, RUN_INTERVAL
 from prometheus_client import start_http_server, Gauge
-from syncdb import sync_database
 
 # Prometheus metrics
 AIR_TEMPERATURE = Gauge('air_temperature', 'Air temperature')
@@ -80,6 +79,7 @@ def light_control():
     if not is_need_start(LIGHT_CONTROL, LIGHT_CONTROL_INTERVAL):
         return False
 
+    light.adjust_light(period)
     logging.info('Light adjusted')
 
     # light_brightness = growing.
@@ -100,7 +100,9 @@ if __name__ == '__main__':
     logging.info('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
 
     while True:
+        period = growing.get_current_period()
+
         update_metrics()
         light_control()
 
-        time.sleep(EXPORTER_UPDATE_INTERVAL)
+        time.sleep(RUN_INTERVAL)

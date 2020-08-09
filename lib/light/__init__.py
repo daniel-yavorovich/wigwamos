@@ -1,3 +1,6 @@
+import datetime
+import logging
+
 from ..properties import Property
 
 
@@ -26,3 +29,19 @@ class Light(Property):
 
     def light_power_on(self):
         self.relays.relay_turn_on(self.LIGHT_RELAY_NUM)
+
+    def is_not_light(self, period):
+        if not period.sunrise_start and not period.sunrise_start and not period.sunrise_start and not period.sunrise_start:
+            return True
+
+    def adjust_light(self, period):
+        if self.is_not_light(period):
+            self.light_power_off()
+            return
+
+        now = datetime.datetime.now().time()
+
+        if period.sunrise_start <= now <= period.sunset_start:
+            self.light_power_on()
+        elif period.sunset_stop <= now <= period.sunrise_start:
+            self.light_power_off()
