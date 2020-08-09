@@ -99,9 +99,9 @@ def fan_control():
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
+    prop = Property()
     relays = Relays()
     triac_hat = TriacHat()
-    prop = Property()
     sensors = Sensors()
     growing = Growing()
     light = Light(relays)

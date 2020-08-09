@@ -11,7 +11,7 @@ Automatize grooving process
 * water level control
 * display stats on micro display
 * storage temperature and humidity metrics
-* alerts (using prometheus?) for send to telegram & show on display
+* alerts for send to telegram 
 
 ## Details
 
@@ -52,3 +52,7 @@ Control light, based on growing process
 * Get growing day
 * Get progress in %
 
+# TODO
+* LED dimmer for sunrise/sunset
+* add duration of growing to model
+* add button for show stats on display
