@@ -7,15 +7,18 @@ class Metrics:
     def __init__(self):
         self.prom = PrometheusConnect()
 
-    def get_avg_soil_moisture(self, last='5m'):
+    def __get_avg_value(self, metric, last):
         try:
             result = self.prom.custom_query(
-                query='sum(sum_over_time(soil_moisture[{last}]))/sum(count_over_time(soil_moisture[{last}]))'.
-                    format(last=last))
+                query='sum(sum_over_time({metric}[{last}]))/sum({metric}(soil_moisture[{last}]))'.format(metric=metric,
+                                                                                                         last=last))
             return float(result[0]['value'][1])
         except Exception as e:
             logging.error(e)
-            return 0
+            return None
 
-    def is_need_watering(self):
-        return self.get_avg_soil_moisture() == 1.0
+    def get_avg_soil_moisture(self, last='5m'):
+        return self.__get_avg_value('soil_moisture', last)
+
+    def get_avg_humidity(self, last='5m'):
+        return self.__get_avg_value('air_humidity', last)

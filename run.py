@@ -4,6 +4,7 @@ import logging
 import datetime
 
 from lib.fan import Fan
+from lib.humidify import Humidify
 from lib.metrics import Metrics
 from lib.properties import Property
 from lib.growing import Growing
@@ -13,7 +14,7 @@ from lib.sensors import Sensors
 from lib.triac_hat import TriacHat
 from lib.watering import Watering
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
-    FAN_CONTROL_INTERVAL, RUN_INTERVAL, SOIL_MOISTURE_CONTROL_INTERVAL
+    FAN_CONTROL_INTERVAL, RUN_INTERVAL, SOIL_MOISTURE_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL
 from prometheus_client import start_http_server, Gauge
 
 # Prometheus metrics
@@ -30,14 +31,14 @@ FAN_SPEED = Gauge('fan_speed', 'Fan speed')
 UPDATE_METRICS = 'update_metrics'
 LIGHT_CONTROL = 'light_control'
 FAN_CONTROL = 'fan_control'
-HUMIDITY_CONTROL = 'humidity_control'
+HUMIDIFY_CONTROL = 'humidify_control'
 SOIL_MOISTURE_CONTROL = 'soil_moisture_control'
 
 LAST_EXECUTION_TIME = {
     UPDATE_METRICS: None,
     LIGHT_CONTROL: None,
     FAN_CONTROL: None,
-    HUMIDITY_CONTROL: None,
+    HUMIDIFY_CONTROL: None,
     SOIL_MOISTURE_CONTROL: None,
 }
 
@@ -102,9 +103,18 @@ def watering_control():
     if not is_need_start(SOIL_MOISTURE_CONTROL, SOIL_MOISTURE_CONTROL_INTERVAL):
         return False
 
-    is_need_watering = metrics.is_need_watering()
-    watering.adjust_fan(is_need_watering)
+    avg_soil_moisture = metrics.get_avg_soil_moisture()
+    watering.adjust_watering(avg_soil_moisture)
     logging.info('Soil moisture adjusted')
+
+
+def humidify_control():
+    if not is_need_start(HUMIDIFY_CONTROL, HUMIDIFY_CONTROL_INTERVAL):
+        return False
+
+    avg_humidity = metrics.get_avg_humidity()
+    humidify.adjust_humidify(period, avg_humidity)
+    logging.info('Humidity adjusted')
 
 
 if __name__ == '__main__':
@@ -123,6 +133,7 @@ if __name__ == '__main__':
     light = Light(relays)
     fan = Fan(triac_hat)
     watering = Watering(relays)
+    humidify = Humidify(relays)
 
     start_http_server(EXPORTER_SERVER_PORT)
     logging.info('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
@@ -134,5 +145,6 @@ if __name__ == '__main__':
         light_control()
         fan_control()
         watering_control()
+        humidify_control()
 
         time.sleep(RUN_INTERVAL)

@@ -27,6 +27,12 @@ class Watering(Property):
 
         return datetime.datetime.fromtimestamp(float(last_watering_time))
 
+    def is_need_watering(self, avg_soil_moisture):
+        if avg_soil_moisture is None:
+            return False
+
+        return avg_soil_moisture == 1.0
+
     def run_watering(self, duration=WATERING_DURATION):
         time_from_last_watering = (datetime.datetime.now() - self.get_last_watering_time()).seconds
         if time_from_last_watering < self.MAX_IDLE_WATERING_TIME:
@@ -44,6 +50,6 @@ class Watering(Property):
 
         return True
 
-    def adjust_fan(self, is_need_watering):
-        if is_need_watering:
+    def adjust_watering(self, avg_soil_moisture):
+        if self.is_need_watering(avg_soil_moisture):
             self.run_watering()
