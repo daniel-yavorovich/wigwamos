@@ -1,6 +1,6 @@
 # WigwamOS
 
-Software for automatize grooving process
+Software for automatize growing process
 
 ## Functions
 
