@@ -22,7 +22,7 @@ After first boot please configure:
 
 ## Install depends
     
-    sudo apt-get install python3-dev python3-pip libopenjp2-7 libtiff5 libleveldb-dev supervisor
+    sudo apt-get install python3-dev python3-pip libopenjp2-7 libtiff5 libleveldb-dev supervisor libatlas-base-dev
     sudo python3 -m pip install --upgrade pip setuptools wheel
     
 ## Configure supervisor

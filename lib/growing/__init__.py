@@ -32,7 +32,7 @@ class Growing(Property):
             self.reset_day_counter()
             start_timestamp = self.get_property_value(self.START_GROWING_PROPERTY_KEY)
 
-        return datetime.datetime.fromtimestamp(float(self.get_property_value(self.START_GROWING_PROPERTY_KEY)))
+        return datetime.datetime.fromtimestamp(float(start_timestamp))
 
     def get_growing_day_count(self):
         return (datetime.datetime.now() - self.get_start_growing_date()).days + 1

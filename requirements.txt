@@ -4,3 +4,4 @@ Adafruit_BBIO==1.2.0
 Pillow==7.2.0
 prometheus-client==0.8.0
 Peewee==3.13.3
+prometheus-api-client==0.4.0

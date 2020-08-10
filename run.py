@@ -4,14 +4,16 @@ import logging
 import datetime
 
 from lib.fan import Fan
+from lib.metrics import Metrics
 from lib.properties import Property
 from lib.growing import Growing
 from lib.light import Light
 from lib.relays import Relays
 from lib.sensors import Sensors
 from lib.triac_hat import TriacHat
+from lib.watering import Watering
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
-    FAN_CONTROL_INTERVAL, RUN_INTERVAL
+    FAN_CONTROL_INTERVAL, RUN_INTERVAL, SOIL_MOISTURE_CONTROL_INTERVAL
 from prometheus_client import start_http_server, Gauge
 
 # Prometheus metrics
@@ -96,6 +98,15 @@ def fan_control():
     logging.info('Fan adjusted')
 
 
+def watering_control():
+    if not is_need_start(SOIL_MOISTURE_CONTROL, SOIL_MOISTURE_CONTROL_INTERVAL):
+        return False
+
+    is_need_watering = metrics.is_need_watering()
+    watering.adjust_fan(is_need_watering)
+    logging.info('Soil moisture adjusted')
+
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
@@ -108,8 +119,10 @@ if __name__ == '__main__':
     triac_hat = TriacHat()
     sensors = Sensors()
     growing = Growing()
+    metrics = Metrics()
     light = Light(relays)
     fan = Fan(triac_hat)
+    watering = Watering(relays)
 
     start_http_server(EXPORTER_SERVER_PORT)
     logging.info('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
@@ -120,5 +133,6 @@ if __name__ == '__main__':
         update_metrics()
         light_control()
         fan_control()
+        watering_control()
 
         time.sleep(RUN_INTERVAL)
