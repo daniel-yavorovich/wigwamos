@@ -2,6 +2,8 @@
 
 Software for automatize growing process
 
+[Install documentation](./INSTALL.md)
+
 ## Functions
 
 * temperature control (by FAN)
@@ -28,7 +30,6 @@ Software for automatize growing process
 #### Grafana Dashboard screenshot
 
 ![grafana dashboard](./data/screenshots/grafana-dashboard.png)
-
 
 ## TODO
 * LED dimmer for sunrise/sunset

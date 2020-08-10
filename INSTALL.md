@@ -25,6 +25,29 @@ After first boot please configure:
     sudo apt-get install python3-dev python3-pip libopenjp2-7 libtiff5 libleveldb-dev supervisor libatlas-base-dev
     sudo python3 -m pip install --upgrade pip setuptools wheel
     
+## Monitoring
+
+    sudo apt-get install -y adduser libfontconfig1 prometheus
+    
+    cd /tmp
+    wget https://dl.grafana.com/oss/release/grafana_7.1.3_armhf.deb
+    sudo dpkg -i grafana_7.1.3_armhf.deb
+    
+    sudo /bin/systemctl daemon-reload
+    sudo /bin/systemctl enable grafana-server
+    sudo /bin/systemctl start grafana-server
+    
+    cp /etc/prometheus/prometheus.yml /etc/prometheus/prometheus.yml.orig
+    tee -a /etc/prometheus/prometheus.yml << EOF
+    
+      - job_name: wigwamos
+        scrape_interval: 5s
+        scrape_timeout: 5s
+        static_configs:
+          - targets: ['localhost:8000']
+    EOF
+    systemctl restart prometheus.service
+    
 ## Configure supervisor
     
     systemctl enable supervisor
@@ -47,26 +70,3 @@ After first boot please configure:
 
     cd /home/pi/wigwamos/
     python init.py
-
-# Monitoring
-
-    sudo apt-get install -y adduser libfontconfig1 prometheus
-    
-    cd /tmp
-    wget https://dl.grafana.com/oss/release/grafana_7.1.3_armhf.deb
-    sudo dpkg -i grafana_7.1.3_armhf.deb
-    
-    sudo /bin/systemctl daemon-reload
-    sudo /bin/systemctl enable grafana-server
-    sudo /bin/systemctl start grafana-server
-    
-    cp /etc/prometheus/prometheus.yml /etc/prometheus/prometheus.yml.orig
-    tee -a /etc/prometheus/prometheus.yml << EOF
-    
-      - job_name: wigwamos
-        scrape_interval: 5s
-        scrape_timeout: 5s
-        static_configs:
-          - targets: ['localhost:8000']
-    EOF
-    systemctl restart prometheus.service
