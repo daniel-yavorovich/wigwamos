@@ -25,6 +25,10 @@ Software for automatize grooving process
 * Light brightness
 * Fan speed
 
+#### Grafana Dashboard screenshot
+
+![grafana dashboard](./data/screenshots/grafana-dashboard.png)
+
 
 ## TODO
 * LED dimmer for sunrise/sunset
