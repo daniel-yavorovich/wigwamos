@@ -13,6 +13,7 @@ from lib.relays import Relays
 from lib.sensors import Sensors
 from lib.triac_hat import TriacHat
 from lib.watering import Watering
+from lib.async_helper import run_async
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
     FAN_CONTROL_INTERVAL, RUN_INTERVAL, SOIL_MOISTURE_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL
 from prometheus_client import start_http_server, Gauge
@@ -26,6 +27,8 @@ WATER_LEVEL = Gauge('water_level', 'Water level')
 PI_TEMPERATURE = Gauge('pi_temperature', 'Raspberry PI CPU temperature')
 LIGHT_BRIGHTNESS = Gauge('light_brightness', 'Light brightness')
 FAN_SPEED = Gauge('fan_speed', 'Fan speed')
+TARGET_TEMPERATURE = Gauge('target_temperature', 'Target temperature')
+TARGET_HUMIDITY = Gauge('target_humidity', 'Target humidity')
 
 # Services
 UPDATE_METRICS = 'update_metrics'
@@ -56,6 +59,7 @@ def is_need_start(service, interval):
         return True
 
 
+@run_async
 def update_metrics():
     if not is_need_start(UPDATE_METRICS, EXPORTER_UPDATE_INTERVAL):
         return False
@@ -78,10 +82,13 @@ def update_metrics():
     PI_TEMPERATURE.set(pi_temperature)
     LIGHT_BRIGHTNESS.set(light_brightness)
     FAN_SPEED.set(fan_speed)
+    TARGET_TEMPERATURE.set(period.temperature)
+    TARGET_HUMIDITY.set(period.humidity)
 
     logging.info('Prometheus metrics updated')
 
 
+@run_async
 def light_control():
     if not is_need_start(LIGHT_CONTROL, LIGHT_CONTROL_INTERVAL):
         return False
@@ -90,6 +97,7 @@ def light_control():
     logging.info('Light adjusted')
 
 
+@run_async
 def fan_control():
     if not is_need_start(FAN_CONTROL, FAN_CONTROL_INTERVAL):
         return False
@@ -99,6 +107,7 @@ def fan_control():
     logging.info('Fan adjusted')
 
 
+@run_async
 def watering_control():
     if not is_need_start(SOIL_MOISTURE_CONTROL, SOIL_MOISTURE_CONTROL_INTERVAL):
         return False
@@ -108,6 +117,7 @@ def watering_control():
     logging.info('Soil moisture adjusted')
 
 
+@run_async
 def humidify_control():
     if not is_need_start(HUMIDIFY_CONTROL, HUMIDIFY_CONTROL_INTERVAL):
         return False
@@ -141,10 +151,16 @@ if __name__ == '__main__':
     while True:
         period = growing.get_current_period()
 
-        update_metrics()
-        light_control()
-        fan_control()
-        watering_control()
-        humidify_control()
+        t1 = update_metrics()
+        t2 = light_control()
+        t3 = fan_control()
+        t4 = watering_control()
+        t5 = humidify_control()
+
+        t1.join()
+        t2.join()
+        t3.join()
+        t4.join()
+        t5.join()
 
         time.sleep(RUN_INTERVAL)
