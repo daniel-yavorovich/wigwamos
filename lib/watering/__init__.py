@@ -36,7 +36,7 @@ class Watering(Property):
     def run_watering(self, duration=WATERING_DURATION):
         time_from_last_watering = (datetime.datetime.now() - self.get_last_watering_time()).seconds
         if time_from_last_watering < self.MAX_IDLE_WATERING_TIME:
-            logging.warning('Need to wait {} seconds for the water to drain'.format(
+            logging.debug('Need to wait {} seconds for the water to drain'.format(
                 self.MAX_IDLE_WATERING_TIME - time_from_last_watering))
             return False
 

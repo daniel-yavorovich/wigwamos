@@ -24,5 +24,5 @@ class Metrics:
     def get_avg_humidity(self, last='5m'):
         return self.__get_avg_value('air_humidity', last)
 
-    def get_avg_temperature(self, last='5m'):
+    def get_avg_temperature(self, last='1m'):
         return self.__get_avg_value('air_temperature', last)

@@ -30,7 +30,7 @@ class Humidify(Property):
     def run_humidify(self, duration=HUMIDIFY_DURATION):
         time_from_last_humidify = (datetime.datetime.now() - self.get_last_humidify_time()).seconds
         if time_from_last_humidify < self.MAX_IDLE_HUMIDIFY_TIME:
-            logging.warning('Need to wait {} seconds for the moisture is distributed'.format(
+            logging.debug('Need to wait {} seconds for the moisture is distributed'.format(
                 self.MAX_IDLE_HUMIDIFY_TIME - time_from_last_humidify))
             return False
 

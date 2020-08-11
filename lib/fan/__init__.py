@@ -1,10 +1,8 @@
-import logging
-
 from ..properties import Property
 
 
 class Fan(Property):
-    FAN_SPEED_MIN = 70
+    FAN_SPEED_MIN = 50
     FAN_STEP_PERCENT = 5
     FAN_TRIAC_HAT_CHANNEL = 1
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
@@ -35,15 +33,15 @@ class Fan(Property):
 
         return True
 
-    def adjust_fan(self, period, temperature):
+    def adjust_fan(self, target_temperature, current_temperature):
         fan_speed_percent_old = fan_speed_percent = self.get_fan_speed()
 
-        if not temperature:
+        if not current_temperature:
             return False
 
-        if period.temperature < temperature:
+        if target_temperature < current_temperature:
             fan_speed_percent += self.FAN_STEP_PERCENT
-        elif period.temperature > temperature:
+        elif target_temperature > current_temperature:
             fan_speed_percent -= self.FAN_STEP_PERCENT
 
         if fan_speed_percent_old != fan_speed_percent:

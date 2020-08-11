@@ -107,7 +107,7 @@ def fan_control():
         return False
 
     temperature = metrics.get_avg_temperature()
-    fan.adjust_fan(period, temperature)
+    fan.adjust_fan(period.temperature, temperature)
     logging.debug('Fan adjusted')
 
 

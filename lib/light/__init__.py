@@ -1,5 +1,4 @@
 import datetime
-import logging
 
 from ..properties import Property
 
@@ -30,7 +29,7 @@ class Light(Property):
     def light_power_on(self):
         self.relays.relay_turn_on(self.LIGHT_RELAY_NUM)
 
-    def is_not_light(self, period):
+    def is_light_disabled(self, period):
         if not period.sunrise_start and not period.sunrise_start and not period.sunrise_start and not period.sunrise_start:
             return True
 
@@ -40,15 +39,11 @@ class Light(Property):
         return result.seconds
 
     def adjust_light(self, period):
-        light_brightness_old = self.get_light_brightness()
-
-        if self.is_not_light(period):
-            self.light_power_off()
-            return
-
         now = datetime.datetime.now().time()
 
-        if period.sunrise_start <= now <= period.sunset_start:
+        if self.is_light_disabled(period):
+            light_brightness = 0
+        elif period.sunrise_start <= now <= period.sunset_start:
             if now < period.sunrise_stop:
                 total_sunrise_seconds = self.__get_time_diff(period.sunrise_start, period.sunrise_stop)
                 seconds_from_sunrise_start = self.__get_time_diff(period.sunrise_start, now)
@@ -65,5 +60,7 @@ class Light(Property):
         else:
             light_brightness = 0
 
-        if light_brightness_old != light_brightness:
+        light_brightness = int(light_brightness)
+
+        if self.get_light_brightness() != light_brightness:
             self.set_light_brightness(light_brightness)
