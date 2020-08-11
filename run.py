@@ -89,7 +89,7 @@ def update_metrics():
     TARGET_TEMPERATURE.set(period.temperature)
     TARGET_HUMIDITY.set(period.humidity)
 
-    logging.info('Prometheus metrics updated')
+    logging.debug('Prometheus metrics updated')
 
 
 @run_async
@@ -98,7 +98,7 @@ def light_control():
         return False
 
     light.adjust_light(period)
-    logging.info('Light adjusted')
+    logging.debug('Light adjusted')
 
 
 @run_async
@@ -108,7 +108,7 @@ def fan_control():
 
     temperature = metrics.get_avg_temperature()
     fan.adjust_fan(period, temperature)
-    logging.info('Fan adjusted')
+    logging.debug('Fan adjusted')
 
 
 @run_async
@@ -118,7 +118,7 @@ def watering_control():
 
     avg_soil_moisture = metrics.get_avg_soil_moisture()
     watering.adjust_watering(avg_soil_moisture)
-    logging.info('Soil moisture adjusted')
+    logging.debug('Soil moisture adjusted')
 
 
 @run_async
@@ -128,14 +128,16 @@ def humidify_control():
 
     avg_humidity = metrics.get_avg_humidity()
     humidify.adjust_humidify(period, avg_humidity)
-    logging.info('Humidity adjusted')
+    logging.debug('Humidity adjusted')
 
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
-    logging.info('Waiting 30 sec before start for loading Triac HAT module...')
+    # TODO: need to uncomment
+    # logging.info('Waiting 30 sec before start for loading Triac HAT module...')
     # time.sleep(30)
+
     logging.info('Starting...')
 
     prop = Property()
@@ -150,7 +152,7 @@ if __name__ == '__main__':
     humidify = Humidify(relays)
 
     start_http_server(EXPORTER_SERVER_PORT)
-    logging.info('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
+    logging.debug('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
 
     while True:
         period = growing.get_current_period()

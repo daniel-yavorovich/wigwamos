@@ -44,11 +44,12 @@ class Humidify(Property):
 
         return True
 
-    def __is_need_humidify(self, period_humidity, avg_humidity):
+    @staticmethod
+    def __is_need_humidify(target_humidity, avg_humidity):
         if avg_humidity is None:
             return False
 
-        return period_humidity > avg_humidity
+        return target_humidity > avg_humidity
 
     def adjust_humidify(self, period, avg_humidity):
         if self.__is_need_humidify(period.humidity, avg_humidity):
