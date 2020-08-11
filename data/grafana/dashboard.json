@@ -1,4 +1,40 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "7.1.3"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -15,7 +51,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
+  "id": null,
   "links": [],
   "panels": [
     {
@@ -58,7 +94,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -84,7 +120,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 11,
+        "w": 14,
         "x": 0,
         "y": 0
       },
@@ -170,17 +206,30 @@
       }
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {
             "align": null
           },
-          "mappings": [],
+          "mappings": [
+            {
+              "from": "",
+              "id": 0,
+              "text": "Need watering",
+              "to": "",
+              "type": 1,
+              "value": "1"
+            },
+            {
+              "from": "",
+              "id": 1,
+              "text": "the soil is wet!",
+              "to": "",
+              "type": 1,
+              "value": "0"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -198,88 +247,43 @@
         },
         "overrides": []
       },
-      "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 10,
-        "x": 11,
+        "w": 4,
+        "x": 14,
         "y": 0
       },
-      "hiddenSeries": false,
       "id": 6,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
       "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
           "expr": "soil_moisture",
           "interval": "",
-          "legendFormat": "soil_moisture",
+          "legendFormat": "Soil moisture",
           "refId": "A"
         }
       ],
-      "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Soil moisture",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      "type": "stat"
     },
     {
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -292,12 +296,67 @@
                 "value": null
               },
               {
-                "color": "#EAB839",
-                "value": 30
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 18,
+        "y": 0
+      },
+      "id": 18,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Autoflowering$/",
+          "values": false
+        },
+        "textMode": "name"
+      },
+      "pluginVersion": "7.1.3",
+      "targets": [
+        {
+          "expr": "growing_info",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{config}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Config",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
-                "value": 70
+                "value": 80
               }
             ]
           }
@@ -310,32 +369,95 @@
         "x": 21,
         "y": 0
       },
-      "id": 8,
-      "interval": "",
+      "id": 20,
       "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
-            "mean"
+            "last"
           ],
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "textMode": "name"
       },
       "pluginVersion": "7.1.3",
       "targets": [
         {
-          "expr": "grow_days",
+          "expr": "growing_info",
+          "format": "time_series",
+          "instant": false,
           "interval": "",
-          "legendFormat": "Growing day",
+          "legendFormat": "{{day}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
       "title": "Growing day",
-      "type": "gauge"
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 18,
+        "y": 3
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Vegetative$/",
+          "values": false
+        },
+        "textMode": "name"
+      },
+      "pluginVersion": "7.1.3",
+      "targets": [
+        {
+          "expr": "growing_info",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{period}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Period",
+      "type": "stat"
     },
     {
       "alert": {
@@ -400,7 +522,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -412,7 +534,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 7,
         "w": 24,
         "x": 0,
         "y": 6
@@ -447,12 +569,19 @@
           "expr": "air_temperature",
           "instant": false,
           "interval": "",
-          "legendFormat": "Air temperature",
+          "legendFormat": "current",
           "refId": "A"
+        },
+        {
+          "expr": "target_temperature",
+          "interval": "",
+          "legendFormat": "target",
+          "refId": "B"
         }
       ],
       "thresholds": [
         {
+          "$$hashKey": "object:95",
           "colorMode": "critical",
           "fill": true,
           "line": true,
@@ -480,6 +609,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:105",
           "format": "celsius",
           "label": null,
           "logBase": 1,
@@ -488,6 +618,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:106",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -506,7 +637,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -531,10 +662,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 5,
+        "h": 7,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 13
       },
       "hiddenSeries": false,
       "id": 4,
@@ -565,8 +696,14 @@
         {
           "expr": "air_humidity",
           "interval": "",
-          "legendFormat": "Air humidity",
+          "legendFormat": "current",
           "refId": "A"
+        },
+        {
+          "expr": "target_humidity",
+          "interval": "",
+          "legendFormat": "target",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -615,7 +752,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -643,7 +780,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 20
       },
       "hiddenSeries": false,
       "id": 14,
@@ -727,7 +864,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -741,7 +878,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 26
       },
       "hiddenSeries": false,
       "id": 16,
@@ -860,7 +997,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -874,7 +1011,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 34
       },
       "hiddenSeries": false,
       "id": 12,
@@ -991,5 +1128,5 @@
   "timezone": "",
   "title": "WigwamOS",
   "uid": "QdOvhOWRz",
-  "version": 22
+  "version": 27
 }

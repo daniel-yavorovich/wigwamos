@@ -16,13 +16,13 @@ from lib.watering import Watering
 from lib.async_helper import run_async
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
     FAN_CONTROL_INTERVAL, RUN_INTERVAL, SOIL_MOISTURE_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL
-from prometheus_client import start_http_server, Gauge
+from prometheus_client import start_http_server, Gauge, Info
 
 # Prometheus metrics
+GROW_INFO = Info('growing', 'Grow info')
 AIR_TEMPERATURE = Gauge('air_temperature', 'Air temperature')
 AIR_HUMIDITY = Gauge('air_humidity', 'Air humidity')
 SOIL_MOISTURE = Gauge('soil_moisture', 'Soil moisture')
-GROW_DAYS = Gauge('grow_days', 'Grow days')
 WATER_LEVEL = Gauge('water_level', 'Water level')
 PI_TEMPERATURE = Gauge('pi_temperature', 'Raspberry PI CPU temperature')
 LIGHT_BRIGHTNESS = Gauge('light_brightness', 'Light brightness')
@@ -77,7 +77,11 @@ def update_metrics():
     AIR_HUMIDITY.set(humidity)
     AIR_TEMPERATURE.set(temperature)
     SOIL_MOISTURE.set(soil_moisture)
-    GROW_DAYS.set(grow_days)
+    GROW_INFO.info({
+        'day': str(grow_days),
+        'config': period.config.name,
+        'period': period.name,
+    })
     WATER_LEVEL.set(water_level)
     PI_TEMPERATURE.set(pi_temperature)
     LIGHT_BRIGHTNESS.set(light_brightness)
@@ -131,7 +135,7 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
     logging.info('Waiting 30 sec before start for loading Triac HAT module...')
-    time.sleep(30)
+    # time.sleep(30)
     logging.info('Starting...')
 
     prop = Property()
