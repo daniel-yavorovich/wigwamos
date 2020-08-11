@@ -3,7 +3,7 @@ from ..properties import Property
 
 class Fan(Property):
     FAN_SPEED_MIN = 50
-    FAN_STEP_PERCENT = 5
+    FAN_STEP_PERCENT = 1
     FAN_TRIAC_HAT_CHANNEL = 1
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
 
@@ -11,7 +11,7 @@ class Fan(Property):
         super().__init__()
         self.triac_hat = triac_hat
 
-        self.set_fan_speed(self.FAN_SPEED_MIN)
+        self.set_fan_speed(self.get_fan_speed())
 
     def get_fan_speed(self):
         return int(self.get_property_value(self.FAN_SPEED_PROPERTY_KEY))
