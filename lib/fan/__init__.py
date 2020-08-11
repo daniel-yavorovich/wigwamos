@@ -36,7 +36,7 @@ class Fan(Property):
         return True
 
     def adjust_fan(self, period, temperature):
-        fan_speed_percent = self.get_fan_speed()
+        fan_speed_percent_old = fan_speed_percent = self.get_fan_speed()
 
         if not temperature:
             return False
@@ -46,6 +46,7 @@ class Fan(Property):
         elif period.temperature > temperature:
             fan_speed_percent -= self.FAN_STEP_PERCENT
 
-        self.set_fan_speed(fan_speed_percent)
+        if fan_speed_percent_old != fan_speed_percent:
+            self.set_fan_speed(fan_speed_percent)
 
         return True
