@@ -94,8 +94,8 @@ def fan_control():
     if not is_need_start(FAN_CONTROL, FAN_CONTROL_INTERVAL):
         return False
 
-    humidity, temperature = sensors.get_humidity_temperature()
-    fan.adjust_fan(humidity, temperature)
+    temperature = metrics.get_avg_temperature()
+    fan.adjust_fan(period, temperature)
     logging.info('Fan adjusted')
 
 
