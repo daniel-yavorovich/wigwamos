@@ -1,6 +1,6 @@
 # WigwamOS
 
-Software for automatize growing process
+Software & install documentation for WigwamBox - Open Source smart growbox. 
 
 [Install documentation](./INSTALL.md)
 
