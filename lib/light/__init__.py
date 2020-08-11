@@ -40,7 +40,7 @@ class Light(Property):
         return result.seconds
 
     def adjust_light(self, period):
-        light_brightness = 0
+        light_brightness_old = self.get_light_brightness()
 
         if self.is_not_light(period):
             self.light_power_off()
@@ -62,5 +62,8 @@ class Light(Property):
                 light_brightness = (-100 * seconds_from_sunset_start / total_sunset_seconds) + 100
             else:
                 light_brightness = 0
+        else:
+            light_brightness = 0
 
-        self.set_light_brightness(light_brightness)
+        if light_brightness_old != light_brightness:
+            self.set_light_brightness(light_brightness)
