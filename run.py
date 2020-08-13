@@ -14,9 +14,11 @@ from lib.sensors import Sensors
 from lib.triac_hat import TriacHat
 from lib.watering import Watering
 from lib.async_helper import run_async
+
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
     FAN_CONTROL_INTERVAL, RUN_INTERVAL, SOIL_MOISTURE_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL
-from prometheus_client import start_http_server, Gauge, Info
+
+from prometheus_client import Gauge, Info, start_http_server as start_prometheus_exporter
 
 # Prometheus metrics
 GROW_INFO = Info('growing', 'Grow info')
@@ -151,7 +153,7 @@ if __name__ == '__main__':
     watering = Watering(relays)
     humidify = Humidify(relays)
 
-    start_http_server(EXPORTER_SERVER_PORT)
+    start_prometheus_exporter(EXPORTER_SERVER_PORT)
     logging.debug('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
 
     while True:

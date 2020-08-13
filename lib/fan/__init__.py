@@ -3,7 +3,7 @@ from ..properties import Property
 
 class Fan(Property):
     FAN_SPEED_MIN = 50
-    FAN_STEP_PERCENT = 1
+    FAN_STEP_PERCENT = 5
     FAN_TRIAC_HAT_CHANNEL = 1
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
 
@@ -33,18 +33,44 @@ class Fan(Property):
 
         return True
 
+    # def adjust_fan(self, target_temperature, current_temperature):
+    #     fan_speed_percent_old = fan_speed_percent = self.get_fan_speed()
+    #
+    #     if not current_temperature:
+    #         return False
+    #
+    #     if target_temperature < current_temperature:
+    #         fan_speed_percent += self.FAN_STEP_PERCENT
+    #     elif target_temperature > current_temperature:
+    #         fan_speed_percent -= self.FAN_STEP_PERCENT
+    #
+    #     if fan_speed_percent_old != fan_speed_percent:
+    #         self.set_fan_speed(fan_speed_percent)
+    #
+    #     return True
+
     def adjust_fan(self, target_temperature, current_temperature):
-        fan_speed_percent_old = fan_speed_percent = self.get_fan_speed()
+        fan_speed_percent = self.FAN_SPEED_MIN
 
         if not current_temperature:
             return False
 
-        if target_temperature < current_temperature:
+        if current_temperature > 20:
             fan_speed_percent += self.FAN_STEP_PERCENT
-        elif target_temperature > current_temperature:
-            fan_speed_percent -= self.FAN_STEP_PERCENT
 
-        if fan_speed_percent_old != fan_speed_percent:
-            self.set_fan_speed(fan_speed_percent)
+        if current_temperature > 22:
+            fan_speed_percent += self.FAN_STEP_PERCENT
 
-        return True
+        if current_temperature > 24:
+            fan_speed_percent += self.FAN_STEP_PERCENT
+
+        if current_temperature > 26:
+            fan_speed_percent += self.FAN_STEP_PERCENT
+
+        if current_temperature > 28:
+            fan_speed_percent += self.FAN_STEP_PERCENT
+
+        if current_temperature > 30:
+            fan_speed_percent = 100
+
+        self.set_fan_speed(fan_speed_percent)
