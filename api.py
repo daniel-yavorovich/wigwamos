@@ -1,6 +1,9 @@
 from datetime import datetime
 
-from flask import Flask, abort, jsonify
+import logging
+
+import re
+from flask import Flask, abort, jsonify, request
 from lib.metrics import Metrics
 from lib.growing import Growing
 from flask_cors import CORS
@@ -36,16 +39,45 @@ def metrics(metric):
     }
 
 
-@app.route('/api/growing')
-def growing():
-    period = g.get_current_period()
-    config = period.config
-    day_count = g.get_growing_day_count()
-    total_days = g.get_growing_total_days()
+@app.route('/api/growing/configs')
+def growing_configs():
+    return {'names': g.get_config_names()}
 
-    return {
-        'config': config.name,
-        'period': period.name,
-        'day_count': day_count,
-        'total_days': total_days
-    }
+
+@app.route('/api/growing')
+def growing_get():
+    return g.get_all_info()
+
+
+@app.route('/api/growing', methods=['POST'])
+def growing_update():
+    data = request.json
+
+    if not data:
+        return {}, 204
+
+    if data.get('config'):
+        if data['config'] not in g.get_config_names():
+            return abort(400, description="Config {} unavailable".format(data['config']))
+        else:
+            g.set_current_config(data['config'])
+
+    if data.get('day_count'):
+        try:
+            day_count = int(data['day_count'])
+        except Exception as e:
+            logging.error(e)
+            return abort(400, description="Incorrect value '{}' for day_count".format(data['day_count']))
+
+        if 0 > day_count > 100:
+            return abort(400, description="Value '{}' for day_count out of range 1..100".format(data['day_count']))
+
+        g.set_day_counter(day_count)
+
+    if data.get('manual_mode'):
+        if re.search('false', data.get('manual_mode'), re.IGNORECASE):
+            g.set_manual_mode(False)
+        else:
+            g.set_manual_mode(True)
+
+    return g.get_all_info()

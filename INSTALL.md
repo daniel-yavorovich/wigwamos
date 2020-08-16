@@ -6,8 +6,8 @@ After write image:
     tee wpa_supplicant.conf << EOF
     ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
     network={
-        ssid="soul_wlan_travel_2G"
-        psk="88888888"
+        ssid="soul_wlan_2G"
+        psk="0010100101"
         key_mgmt=WPA-PSK
     }
     EOF

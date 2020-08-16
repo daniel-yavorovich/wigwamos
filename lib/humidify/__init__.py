@@ -6,7 +6,7 @@ from ..properties import Property
 
 
 class Humidify(Property):
-    HUMIDIFIER_RELAY_NUM = 2
+    HUMIDIFIER_RELAY_NUM = 1
     HUMIDIFY_DURATION = 30
     MAX_IDLE_HUMIDIFY_TIME = 300
     LAST_HUMIDIFY_PROPERTY_KEY = 'last_humidify_time'

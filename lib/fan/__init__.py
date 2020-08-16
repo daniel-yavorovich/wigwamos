@@ -22,6 +22,9 @@ class Fan(Property):
         elif value > 100:
             value = 100
 
+        if self.get_fan_speed() == value:
+            return False
+
         self.set_property(self.FAN_SPEED_PROPERTY_KEY, str(value))
 
         if value == 0:

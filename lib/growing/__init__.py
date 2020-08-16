@@ -15,7 +15,10 @@ class ConfigNotFound(Exception):
 
 class Growing(Property):
     START_GROWING_PROPERTY_KEY = 'start_growing_timestamp'
+    AUTO_MODE_PROPERTY_KEY = 'manual_mode'
+
     CURRENT_GROWING_CONFIG_NAME = 'CURRENT_GROWING_CONFIG_NAME'
+
     DEFAULT_CONFIG_NAME = 'Autoflowering'
 
     def reset_day_counter(self):
@@ -99,3 +102,27 @@ class Growing(Property):
     def get_growing_total_days(self):
         config = self.get_current_config()
         return config.periods.select().order_by('day_to')[-1].day_to
+
+    def set_manual_mode(self, value=False):
+        if value:
+            self.set_property(self.AUTO_MODE_PROPERTY_KEY, True)
+        else:
+            self.delete_property(self.AUTO_MODE_PROPERTY_KEY)
+
+    def is_manual_mode(self):
+        return bool(self.get_property_value(self.AUTO_MODE_PROPERTY_KEY))
+
+    def get_all_info(self):
+        period = self.get_current_period()
+        config = period.config
+        day_count = self.get_growing_day_count()
+        total_days = self.get_growing_total_days()
+        manual_mode = self.is_manual_mode()
+
+        return {
+            'config': config.name,
+            'period': period.name,
+            'day_count': day_count,
+            'total_days': total_days,
+            'manual_mode': manual_mode
+        }

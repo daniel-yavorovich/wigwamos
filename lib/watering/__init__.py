@@ -6,7 +6,7 @@ from ..properties import Property
 
 
 class Watering(Property):
-    WATERING_RELAY_NUM = 1
+    WATERING_RELAY_NUM = 2
     WATERING_DURATION = 10
     MAX_IDLE_WATERING_TIME = 300
     LAST_WATERING_PROPERTY_KEY = 'last_watering_time'
