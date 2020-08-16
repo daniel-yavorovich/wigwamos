@@ -7,7 +7,7 @@ from ..properties import Property
 
 class Watering(Property):
     WATERING_RELAY_NUM = 2
-    WATERING_DURATION = 10
+    WATERING_DURATION = 50
     MAX_IDLE_WATERING_TIME = 300
     LAST_WATERING_PROPERTY_KEY = 'last_watering_time'
 
@@ -50,6 +50,6 @@ class Watering(Property):
 
         return True
 
-    def adjust_watering(self, avg_soil_moisture):
-        if self.is_need_watering(avg_soil_moisture):
+    def adjust_watering(self, soil_moisture):
+        if self.is_need_watering(soil_moisture):
             self.run_watering()

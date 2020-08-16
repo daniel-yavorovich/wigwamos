@@ -11,18 +11,18 @@ class Fan(Property):
         super().__init__()
         self.triac_hat = triac_hat
 
-        self.set_fan_speed(self.get_fan_speed())
+        self.set_fan_speed(self.get_fan_speed(), force=True)
 
     def get_fan_speed(self):
         return int(self.get_property_value(self.FAN_SPEED_PROPERTY_KEY))
 
-    def set_fan_speed(self, value):
+    def set_fan_speed(self, value, force=False):
         if value < self.FAN_SPEED_MIN:
             value = self.FAN_SPEED_MIN
         elif value > 100:
             value = 100
 
-        if self.get_fan_speed() == value:
+        if self.get_fan_speed() == value and not force:
             return False
 
         self.set_property(self.FAN_SPEED_PROPERTY_KEY, str(value))

@@ -50,6 +50,7 @@ LAST_EXECUTION_TIME = {
 METRICS = {
     'humidity': None,
     'temperature': None,
+    'soil_moisture': None,
 }
 
 
@@ -83,6 +84,7 @@ def update_metrics():
     # Update local metrics
     METRICS['humidity'] = humidity
     METRICS['temperature'] = temperature
+    METRICS['soil_moisture'] = soil_moisture
 
     # Update metrics in exporter
     AIR_HUMIDITY.set(humidity)
@@ -126,8 +128,7 @@ def watering_control():
     if not is_need_start(SOIL_MOISTURE_CONTROL, SOIL_MOISTURE_CONTROL_INTERVAL):
         return False
 
-    avg_soil_moisture = metrics.get_avg_soil_moisture()
-    watering.adjust_watering(avg_soil_moisture)
+    watering.adjust_watering(METRICS['soil_moisture'])
     logging.debug('Soil moisture adjusted')
 
 
