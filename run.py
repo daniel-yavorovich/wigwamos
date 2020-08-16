@@ -47,6 +47,11 @@ LAST_EXECUTION_TIME = {
     SOIL_MOISTURE_CONTROL: None,
 }
 
+METRICS = {
+    'humidity': None,
+    'temperature': None,
+}
+
 
 def is_need_start(service, interval):
     """
@@ -74,6 +79,10 @@ def update_metrics():
     pi_temperature = sensors.get_pi_temperature()
     light_brightness = light.get_light_brightness()
     fan_speed = fan.get_fan_speed()
+
+    # Update local metrics
+    METRICS['humidity'] = humidity
+    METRICS['temperature'] = temperature
 
     # Update metrics in exporter
     AIR_HUMIDITY.set(humidity)
@@ -108,8 +117,7 @@ def fan_control():
     if not is_need_start(FAN_CONTROL, FAN_CONTROL_INTERVAL):
         return False
 
-    temperature = metrics.get_avg_temperature()
-    fan.adjust_fan(period.temperature, temperature)
+    fan.adjust_fan(period.temperature, METRICS['temperature'])
     logging.debug('Fan adjusted')
 
 
@@ -128,8 +136,7 @@ def humidify_control():
     if not is_need_start(HUMIDIFY_CONTROL, HUMIDIFY_CONTROL_INTERVAL):
         return False
 
-    avg_humidity = metrics.get_avg_humidity()
-    humidify.adjust_humidify(period, avg_humidity)
+    humidify.adjust_humidify(period.humidity, METRICS['humidity'])
     logging.debug('Humidity adjusted')
 
 
