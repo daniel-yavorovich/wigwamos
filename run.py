@@ -119,7 +119,7 @@ def fan_control():
     if not is_need_start(FAN_CONTROL, FAN_CONTROL_INTERVAL):
         return False
 
-    fan.adjust_fan(period.temperature, METRICS['temperature'])
+    fan.adjust_fan(METRICS['temperature'])
     logging.debug('Fan adjusted')
 
 
@@ -144,10 +144,6 @@ def humidify_control():
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
-    # TODO: need to uncomment
-    # logging.info('Waiting 30 sec before start for loading Triac HAT module...')
-    # time.sleep(30)
-
     logging.info('Starting...')
 
     prop = Property()
@@ -158,7 +154,7 @@ if __name__ == '__main__':
     metrics = Metrics()
     light = Light(relays)
     fan = Fan(triac_hat)
-    watering = Watering(relays)
+    watering = Watering(sensors, relays)
     humidify = Humidify(relays)
 
     start_prometheus_exporter(EXPORTER_SERVER_PORT)

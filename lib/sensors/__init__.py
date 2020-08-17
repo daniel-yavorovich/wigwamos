@@ -33,7 +33,7 @@ class Sensors:
         0: all is well
         1: need watering!
         """
-        return GPIO.input(self.SOIL_MOISTURE_PIN)
+        return int(GPIO.input(self.SOIL_MOISTURE_PIN))
 
     def get_distance(self):
         # set Trigger to HIGH

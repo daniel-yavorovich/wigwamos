@@ -7,46 +7,56 @@ from ..properties import Property
 
 class Watering(Property):
     WATERING_RELAY_NUM = 2
-    WATERING_DURATION = 50
-    MAX_IDLE_WATERING_TIME = 300
-    LAST_WATERING_PROPERTY_KEY = 'last_watering_time'
+    WATERING_STEP_DURATION = 6
+    WATERING_MAX_DURATION = 600
+    WATERING_IN_PROGRESS_PROPERTY_KEY = 'watering_in_progress'
 
-    def __init__(self, relays):
+    def __init__(self, sensors, relays):
         super().__init__()
+        self.sensors = sensors
         self.relays = relays
 
-    def update_last_watering_time(self):
-        date = datetime.datetime.now()
-        return self.set_property(self.LAST_WATERING_PROPERTY_KEY, str(date.timestamp()))
+    def is_watering_in_progress(self):
+        timestamp_text = self.get_property_value(self.WATERING_IN_PROGRESS_PROPERTY_KEY)
 
-    def get_last_watering_time(self):
-        last_watering_time = self.get_property_value(self.LAST_WATERING_PROPERTY_KEY)
-        if not last_watering_time:
-            self.update_last_watering_time()
-            last_watering_time = self.get_property_value(self.LAST_WATERING_PROPERTY_KEY)
-
-        return datetime.datetime.fromtimestamp(float(last_watering_time))
-
-    def is_need_watering(self, avg_soil_moisture):
-        if avg_soil_moisture is None:
+        if not timestamp_text:
             return False
 
-        return avg_soil_moisture == 1.0
-
-    def run_watering(self, duration=WATERING_DURATION):
-        time_from_last_watering = (datetime.datetime.now() - self.get_last_watering_time()).seconds
-        if time_from_last_watering < self.MAX_IDLE_WATERING_TIME:
-            logging.debug('Need to wait {} seconds for the water to drain'.format(
-                self.MAX_IDLE_WATERING_TIME - time_from_last_watering))
+        timestamp = float(timestamp_text)
+        if (datetime.datetime.now() - datetime.datetime.fromtimestamp(timestamp)).seconds > self.WATERING_MAX_DURATION:
             return False
 
+        return True
+
+    def set_watering_in_progress(self):
+        now = datetime.datetime.now()
+        self.set_property(self.WATERING_IN_PROGRESS_PROPERTY_KEY, now.timestamp())
+
+    def unset_watering_in_progress(self):
+        self.delete_property(self.WATERING_IN_PROGRESS_PROPERTY_KEY)
+
+    def is_need_watering(self, soil_moisture):
+        if self.is_watering_in_progress() or soil_moisture is None:
+            return False
+
+        return soil_moisture == 1
+
+    def run_watering(self):
+        start_time = datetime.datetime.now()
+
+        self.set_watering_in_progress()
         self.relays.relay_turn_on(self.WATERING_RELAY_NUM)
-        time.sleep(duration)
+
+        while self.sensors.get_soil_moisture() == 1:
+            time.sleep(self.WATERING_STEP_DURATION)
+
         self.relays.relay_turn_off(self.WATERING_RELAY_NUM)
+        self.unset_watering_in_progress()
 
+        stop_time = datetime.datetime.now()
+
+        duration = (stop_time - start_time).seconds
         logging.info('Watering completed after {} sec'.format(duration))
-
-        self.update_last_watering_time()
 
         return True
 

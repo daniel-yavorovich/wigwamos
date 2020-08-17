@@ -36,23 +36,7 @@ class Fan(Property):
 
         return True
 
-    # def adjust_fan(self, target_temperature, current_temperature):
-    #     fan_speed_percent_old = fan_speed_percent = self.get_fan_speed()
-    #
-    #     if not current_temperature:
-    #         return False
-    #
-    #     if target_temperature < current_temperature:
-    #         fan_speed_percent += self.FAN_STEP_PERCENT
-    #     elif target_temperature > current_temperature:
-    #         fan_speed_percent -= self.FAN_STEP_PERCENT
-    #
-    #     if fan_speed_percent_old != fan_speed_percent:
-    #         self.set_fan_speed(fan_speed_percent)
-    #
-    #     return True
-
-    def adjust_fan(self, target_temperature, current_temperature):
+    def adjust_fan(self, current_temperature):
         fan_speed_percent = self.FAN_SPEED_MIN
 
         if not current_temperature:
