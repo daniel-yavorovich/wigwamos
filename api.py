@@ -2,16 +2,23 @@ from datetime import datetime
 
 import logging
 
-import re
 from flask import Flask, abort, jsonify, request
+
+from lib.fan import Fan
 from lib.metrics import Metrics
 from lib.growing import Growing
+from lib.triac_hat import TriacHat
 from flask_cors import CORS
+
+from lib.properties import Property
 
 m = Metrics()
 g = Growing()
+p = Property()
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app)
+triac_hat = TriacHat()
+fan = Fan(triac_hat)
 
 
 @app.errorhandler(404)
@@ -72,12 +79,33 @@ def growing_update():
         if 0 > day_count > 100:
             return abort(400, description="Value '{}' for day_count out of range 1..100".format(data['day_count']))
 
-        g.set_day_counter(day_count)
+        if day_count != g.get_growing_day_count():
+            g.set_day_counter(day_count)
 
     if data.get('manual_mode'):
-        if re.search('false', data.get('manual_mode'), re.IGNORECASE):
-            g.set_manual_mode(False)
-        else:
-            g.set_manual_mode(True)
+        g.set_manual_mode(True)
+    else:
+        g.set_manual_mode(False)
 
     return g.get_all_info()
+
+
+@app.route('/api/fan')
+def fan_get():
+    return fan.get_all_info()
+
+
+@app.route('/api/fan', methods=['POST'])
+def fan_update():
+    data = request.json
+
+    if not data:
+        return {}, 204
+
+    if data.get('manual_mode'):
+        fan.set_manual_mode(True)
+    else:
+        fan.set_manual_mode(False)
+
+    if data.get('fan_speed') and data['fan_speed'] != p.get_property_value(fan.get_fan_speed()):
+        fan.set_fan_speed(data.get('fan_speed'))

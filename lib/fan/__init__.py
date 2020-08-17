@@ -6,6 +6,7 @@ class Fan(Property):
     FAN_STEP_PERCENT = 5
     FAN_TRIAC_HAT_CHANNEL = 1
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
+    AUTO_MODE_PROPERTY_KEY = 'fan_manual_mode'
 
     def __init__(self, triac_hat):
         super().__init__()
@@ -36,11 +37,23 @@ class Fan(Property):
 
         return True
 
-    def adjust_fan(self, current_temperature):
-        fan_speed_percent = self.FAN_SPEED_MIN
+    def set_manual_mode(self, value=False):
+        if value:
+            self.set_property(self.AUTO_MODE_PROPERTY_KEY, True)
+        else:
+            self.delete_property(self.AUTO_MODE_PROPERTY_KEY)
 
+    def is_manual_mode(self):
+        return bool(self.get_property_value(self.AUTO_MODE_PROPERTY_KEY))
+
+    def adjust_fan(self, current_temperature):
         if not current_temperature:
             return False
+
+        if self.is_manual_mode():
+            return False
+
+        fan_speed_percent = self.FAN_SPEED_MIN
 
         if current_temperature > 20:
             fan_speed_percent += self.FAN_STEP_PERCENT
@@ -61,3 +74,9 @@ class Fan(Property):
             fan_speed_percent = 100
 
         self.set_fan_speed(fan_speed_percent)
+
+    def get_all_info(self):
+        return {
+            'fan_speed': self.get_fan_speed(),
+            'manual_mode': self.is_manual_mode()
+        }

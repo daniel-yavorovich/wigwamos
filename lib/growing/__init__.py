@@ -124,5 +124,9 @@ class Growing(Property):
             'period': period.name,
             'day_count': day_count,
             'total_days': total_days,
-            'manual_mode': manual_mode
+            'manual_mode': manual_mode,
+            'sunrise_start': period.sunrise_start.strftime('%H:%M') if period.sunrise_start else None,
+            'sunrise_stop': period.sunrise_stop.strftime('%H:%M') if period.sunrise_stop else None,
+            'sunset_start': period.sunset_start.strftime('%H:%M') if period.sunset_start else None,
+            'sunset_stop': period.sunset_stop.strftime('%H:%M') if period.sunset_stop else None
         }
