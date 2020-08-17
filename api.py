@@ -109,3 +109,5 @@ def fan_update():
 
     if data.get('fan_speed') and data['fan_speed'] != p.get_property_value(fan.get_fan_speed()):
         fan.set_fan_speed(data.get('fan_speed'))
+
+    return fan.get_all_info()
