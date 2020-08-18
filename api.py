@@ -31,7 +31,7 @@ def metrics(metric):
     labels = []
     data = []
 
-    range_data = m.get_metric_range_data(metric_name=metric)
+    range_data = m.get_metric_range_data(metric)
     if not range_data:
         abort(404, description="Metric not found")
 
@@ -86,6 +86,7 @@ def growing_update():
         g.set_manual_mode(True)
     else:
         g.set_manual_mode(False)
+        fan.set_manual_mode(False)
 
     return g.get_all_info()
 
