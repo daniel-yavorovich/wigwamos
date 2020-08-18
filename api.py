@@ -105,6 +105,7 @@ def fan_update():
 
     if data.get('manual_mode'):
         fan.set_manual_mode(True)
+        g.set_manual_mode(True)
     else:
         fan.set_manual_mode(False)
 
