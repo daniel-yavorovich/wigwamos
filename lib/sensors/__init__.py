@@ -71,7 +71,13 @@ class Sensors:
         if distance_to_water > 1000:
             distance_to_water = 0
 
-        result = 100 - (distance_to_water / BOTTLE_HEIGHT * 100)
+        result = 100 - (distance_to_water - 1 / BOTTLE_HEIGHT * 100)
+
+        if result < 0:
+            result = 0
+
+        if result > 100:
+            result = 100
 
         return round(result, 2)
 

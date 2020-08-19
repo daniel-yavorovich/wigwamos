@@ -63,6 +63,19 @@ After first boot please configure:
     stdout_logfile_backups=10
     stderr_logfile_maxbytes=1MB
     stderr_logfile_backups=10
+    
+    [program:api]
+    command=/usr/local/bin/flask run -h 0.0.0.0
+    directory=/home/pi/wigwamos/
+    autostart=true
+    autorestart=true
+    environment=FLASK_APP="api.py"
+    stdout_logfile=/var/log/wigwamos-api.log
+    stderr_logfile=/var/log/wigwamos-api.log
+    stdout_logfile_maxbytes=1MB
+    stdout_logfile_backups=10
+    stderr_logfile_maxbytes=1MB
+    stderr_logfile_backups=10
     EOF
     systemctl reload supervisor
 

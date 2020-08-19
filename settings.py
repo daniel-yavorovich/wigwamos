@@ -10,7 +10,7 @@ FAN_CONTROL_INTERVAL = int(os.environ.get('FAN_CONTROL_INTERVAL', 10))
 SOIL_MOISTURE_CONTROL_INTERVAL = int(os.environ.get('SOIL_MOISTURE_CONTROL_INTERVAL', 60))
 HUMIDIFY_CONTROL_INTERVAL = int(os.environ.get('HUMIDIFY_CONTROL_INTERVAL', 10))
 
-BOTTLE_HEIGHT = float(os.environ.get('BOTTLE_HEIGHT', 23.6))
+BOTTLE_HEIGHT = float(os.environ.get('BOTTLE_HEIGHT', 27))
 
 API_HOST = os.environ.get('API_HOST', '0.0.0.0')
 API_PORT = int(os.environ.get('API_PORT', 80))

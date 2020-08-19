@@ -5,7 +5,7 @@ from prometheus_api_client.prometheus_connect import PrometheusConnect
 
 
 class Metrics:
-    DEFAULT_AVG_PERIOD = '10m'
+    DEFAULT_AVG_PERIOD = '1m'
 
     def __init__(self):
         self.prom = PrometheusConnect()
