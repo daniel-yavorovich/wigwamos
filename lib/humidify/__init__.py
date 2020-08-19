@@ -8,11 +8,11 @@ class Humidify(Property):
         super().__init__()
         self.relays = relays
 
-    def adjust_humidify(self, target_humidity, avg_humidity):
-        if avg_humidity is None:
+    def adjust_humidify(self, target_humidity, current_humidity):
+        if current_humidity is None:
             return False
 
-        if target_humidity > avg_humidity:
+        if target_humidity > current_humidity:
             self.relays.relay_turn_on(self.HUMIDIFIER_RELAY_NUM)
         else:
             self.relays.relay_turn_off(self.HUMIDIFIER_RELAY_NUM)

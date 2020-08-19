@@ -30,8 +30,7 @@ class Metrics:
     def get_avg_temperature(self, last=DEFAULT_AVG_PERIOD):
         return self.get_avg_value('air_temperature', last)
 
-    def get_metric_range_data(self, query: str, start_time: datetime = (datetime.now() - timedelta(minutes=60)),
-                              end_time: datetime = datetime.now(), step: str = 300,
-                              params: dict = None):
+    def get_metric_range_data(self, query: str, start_time: datetime = (datetime.now() - timedelta(minutes=15)),
+                              end_time: datetime = datetime.now(), step: str = 60):
 
         return self.prom.custom_query_range(query=query, start_time=start_time, end_time=end_time, step=step)

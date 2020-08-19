@@ -25,7 +25,7 @@ class Sensors:
         GPIO.setup(self.RANGING_MODULE_ECHO_PIN, GPIO.IN)
 
     def get_humidity_temperature(self):
-        humidity, temperature = Adafruit_DHT.read_retry(self.DHT_SENSOR, self.DHT_PIN)
+        humidity, temperature = Adafruit_DHT.read_retry(self.DHT_SENSOR, self.DHT_PIN, retries=30)
         return round(humidity, 2), round(temperature, 2)
 
     def get_soil_moisture(self):

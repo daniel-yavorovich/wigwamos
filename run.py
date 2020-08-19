@@ -102,7 +102,13 @@ def update_metrics():
     TARGET_TEMPERATURE.set(period.temperature)
     TARGET_HUMIDITY.set(period.humidity)
 
-    logging.debug('Prometheus metrics updated')
+    logging.info('Metrics: H:{humidity}; T:{temperature}; S:{soil_moisture}; W:{water_level}; F:{fan_speed}'.format(
+        humidity=humidity,
+        temperature=temperature,
+        soil_moisture=soil_moisture,
+        water_level=water_level,
+        fan_speed=fan_speed
+    ))
 
 
 @run_async
