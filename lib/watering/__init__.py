@@ -6,7 +6,7 @@ from ..properties import Property
 
 
 class Watering(Property):
-    WATERING_RELAY_NUM = 2
+    WATERING_RELAY_NUM = 3
     WATERING_STEP_DURATION = 6
     WATERING_MAX_DURATION = 600
     WATERING_IN_PROGRESS_PROPERTY_KEY = 'watering_in_progress'

@@ -5,6 +5,7 @@ from ..properties import Property
 
 class Light(Property):
     LIGHT_RELAY_NUM = 0
+    COOLER_RELAY_NUM = 2
     LIGHT_BRIGHTNESS_PROPERTY_KEY = 'light_brightness'
 
     def __init__(self, relays):
@@ -25,9 +26,11 @@ class Light(Property):
 
     def light_power_off(self):
         self.relays.relay_turn_off(self.LIGHT_RELAY_NUM)
+        self.relays.relay_turn_off(self.COOLER_RELAY_NUM)
 
     def light_power_on(self):
         self.relays.relay_turn_on(self.LIGHT_RELAY_NUM)
+        self.relays.relay_turn_on(self.COOLER_RELAY_NUM)
 
     def is_light_disabled(self, period):
         if not period.sunrise_start and not period.sunrise_start and not period.sunrise_start and not period.sunrise_start:
