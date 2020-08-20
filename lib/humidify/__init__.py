@@ -70,6 +70,10 @@ class Humidify(Property):
 
         # New algo
         target_humidity = self.get_ideal_humidity(current_temperature)
+
+        if not target_humidity:
+            return None
+
         if current_humidity < target_humidity:
             self.relays.relay_turn_on(self.HUMIDIFIER_RELAY_NUM)
             self.__update_total_usage()
@@ -79,7 +83,7 @@ class Humidify(Property):
     def get_ideal_humidity(self, current_temperature):
         try:
             target_humidity_min, target_humidity_max = VDP_TEMPERATURE_HUMIDITY[int(current_temperature)]
+            return int((target_humidity_min + target_humidity_max) / 2)
         except KeyError:
-            raise IncorrectTemperature("Temperature {} is incorrect".format(current_temperature))
-
-        return int((target_humidity_min + target_humidity_max) / 2)
+            logging.error("Temperature {} is incorrect".format(current_temperature))
+            return None

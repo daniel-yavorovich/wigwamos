@@ -106,7 +106,8 @@ def update_metrics():
         TARGET_TEMPERATURE.set(period.temperature)
 
         target_humidity = humidify.get_ideal_humidity(temperature)
-        TARGET_HUMIDITY.set(target_humidity)
+        if target_humidity:
+            TARGET_HUMIDITY.set(target_humidity)
 
         logging.info('Metrics: H:{humidity}; T:{temperature}; S:{soil_moisture}; W:{water_level}; F:{fan_speed}'.format(
             humidity=humidity,
