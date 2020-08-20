@@ -102,8 +102,11 @@ def update_metrics():
         PI_TEMPERATURE.set(pi_temperature)
         LIGHT_BRIGHTNESS.set(light_brightness)
         FAN_SPEED.set(fan_speed)
+
         TARGET_TEMPERATURE.set(period.temperature)
-        TARGET_HUMIDITY.set(period.humidity)
+
+        target_humidity = humidify.get_ideal_humidity(temperature)
+        TARGET_HUMIDITY.set(target_humidity)
 
         logging.info('Metrics: H:{humidity}; T:{temperature}; S:{soil_moisture}; W:{water_level}; F:{fan_speed}'.format(
             humidity=humidity,
@@ -136,8 +139,7 @@ def fan_control():
 @run_async
 def humidify_control():
     while True:
-        period = growing.get_current_period()
-        humidify.adjust_humidify(period.humidity, METRICS['humidity'])
+        humidify.adjust_humidify(METRICS['temperature'], METRICS['humidity'])
         logging.debug('Humidity adjusted')
         time.sleep(HUMIDIFY_CONTROL_INTERVAL)
 

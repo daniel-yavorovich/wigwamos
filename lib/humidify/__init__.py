@@ -4,9 +4,19 @@ import time
 import logging
 
 from ..properties import Property
+from .vdp import VDP_TEMPERATURE_HUMIDITY
+
+
+class IncorrectTemperature(Exception):
+    pass
 
 
 class Humidify(Property):
+    """
+    Smart humidity controller
+    based on VDP table
+    from https://www.alchimiaweb.com/blogen/vapor-pressure-deficit-cannabis-cultivation/
+    """
     HUMIDIFIER_RELAY_NUM = 1
     PUMP_RELAY_NUM = 3
 
@@ -15,6 +25,9 @@ class Humidify(Property):
 
     LAST_USAGE = datetime.datetime.now()
     TOTAL_USAGE = 0
+
+    VPD_MIN = 7.6
+    MPD_MAX = 10.5
 
     def __init__(self, relays):
         super().__init__()
@@ -46,18 +59,27 @@ class Humidify(Property):
         self.relays.relay_turn_off(self.PUMP_RELAY_NUM)
         logging.debug('Humidifier bottle updated')
 
-    def adjust_humidify(self, target_humidity, current_humidity):
-        if current_humidity is None:
+    def adjust_humidify(self, current_temperature, current_humidity):
+        if not current_humidity or not current_humidity:
             return False
 
         logging.debug('Total humidifier usage: {}'.format(self.__get_total_usage()))
-
         if self.__is_need_more_water():
             self.make_bottle_full()
             self.__reset_total_usage()
 
-        if target_humidity > current_humidity:
+        # New algo
+        target_humidity = self.get_ideal_humidity(current_temperature)
+        if current_humidity < target_humidity:
             self.relays.relay_turn_on(self.HUMIDIFIER_RELAY_NUM)
             self.__update_total_usage()
         else:
             self.relays.relay_turn_off(self.HUMIDIFIER_RELAY_NUM)
+
+    def get_ideal_humidity(self, current_temperature):
+        try:
+            target_humidity_min, target_humidity_max = VDP_TEMPERATURE_HUMIDITY[int(current_temperature)]
+        except KeyError:
+            raise IncorrectTemperature("Temperature {} is incorrect".format(current_temperature))
+
+        return int((target_humidity_min + target_humidity_max) / 2)
