@@ -12,12 +12,10 @@ from lib.light import Light
 from lib.relays import Relays
 from lib.sensors import Sensors
 from lib.triac_hat import TriacHat
-from lib.watering import Watering
 from lib.async_helper import run_async
 
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
-    FAN_CONTROL_INTERVAL, RUN_INTERVAL, SOIL_MOISTURE_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL
-
+    FAN_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL
 from prometheus_client import Gauge, Info, start_http_server as start_prometheus_exporter
 
 # Prometheus metrics
@@ -37,6 +35,7 @@ UPDATE_METRICS = 'update_metrics'
 LIGHT_CONTROL = 'light_control'
 FAN_CONTROL = 'fan_control'
 HUMIDIFY_CONTROL = 'humidify_control'
+HUMIDIFY_PUMP_CONTROL = 'humidify_pump_control'
 SOIL_MOISTURE_CONTROL = 'soil_moisture_control'
 
 LAST_EXECUTION_TIME = {
@@ -44,13 +43,14 @@ LAST_EXECUTION_TIME = {
     LIGHT_CONTROL: None,
     FAN_CONTROL: None,
     HUMIDIFY_CONTROL: None,
+    HUMIDIFY_PUMP_CONTROL: None,
     SOIL_MOISTURE_CONTROL: None,
 }
 
 METRICS = {
-    'humidity': None,
-    'temperature': None,
-    'soil_moisture': None,
+    'humidity': 0,
+    'temperature': 0,
+    'soil_moisture': 1,
 }
 
 
@@ -69,82 +69,80 @@ def is_need_start(service, interval):
 
 @run_async
 def update_metrics():
-    if not is_need_start(UPDATE_METRICS, EXPORTER_UPDATE_INTERVAL):
-        return False
+    while True:
+        # Get properties
+        period = growing.get_current_period()
+        grow_days = growing.get_growing_day_count()
+        light_brightness = light.get_light_brightness()
+        fan_speed = fan.get_fan_speed()
 
-    # Get metrics
-    humidity, temperature = sensors.get_humidity_temperature()
-    soil_moisture = sensors.get_soil_moisture()
-    grow_days = growing.get_growing_day_count()
-    water_level = sensors.get_water_level()
-    pi_temperature = sensors.get_pi_temperature()
-    light_brightness = light.get_light_brightness()
-    fan_speed = fan.get_fan_speed()
+        # Get metrics
+        water_level = sensors.get_water_level()
+        humidity, temperature = sensors.get_humidity_temperature()
+        soil_moisture = int(sensors.is_soil_is_wet())
+        pi_temperature = sensors.get_pi_temperature()
 
-    # Update local metrics
-    METRICS['humidity'] = humidity
-    METRICS['temperature'] = temperature
-    METRICS['soil_moisture'] = soil_moisture
+        # Update local metrics
+        if humidity and temperature:
+            METRICS['humidity'] = humidity
+            METRICS['temperature'] = temperature
+        METRICS['soil_moisture'] = soil_moisture
 
-    # Update metrics in exporter
-    AIR_HUMIDITY.set(humidity)
-    AIR_TEMPERATURE.set(temperature)
-    SOIL_MOISTURE.set(soil_moisture)
-    GROW_INFO.info({
-        'day': str(grow_days),
-        'config': period.config.name,
-        'period': period.name,
-    })
-    WATER_LEVEL.set(water_level)
-    PI_TEMPERATURE.set(pi_temperature)
-    LIGHT_BRIGHTNESS.set(light_brightness)
-    FAN_SPEED.set(fan_speed)
-    TARGET_TEMPERATURE.set(period.temperature)
-    TARGET_HUMIDITY.set(period.humidity)
+        # Update metrics in exporter
+        if humidity and temperature:
+            AIR_HUMIDITY.set(humidity)
+            AIR_TEMPERATURE.set(temperature)
+        SOIL_MOISTURE.set(soil_moisture)
+        GROW_INFO.info({
+            'day': str(grow_days),
+            'config': period.config.name,
+            'period': period.name,
+        })
+        WATER_LEVEL.set(water_level)
+        PI_TEMPERATURE.set(pi_temperature)
+        LIGHT_BRIGHTNESS.set(light_brightness)
+        FAN_SPEED.set(fan_speed)
 
-    logging.info('Metrics: H:{humidity}; T:{temperature}; S:{soil_moisture}; W:{water_level}; F:{fan_speed}'.format(
-        humidity=humidity,
-        temperature=temperature,
-        soil_moisture=soil_moisture,
-        water_level=water_level,
-        fan_speed=fan_speed
-    ))
+        TARGET_TEMPERATURE.set(period.temperature)
+
+        target_humidity = humidify.get_ideal_humidity(temperature)
+        if target_humidity:
+            TARGET_HUMIDITY.set(target_humidity)
+
+        logging.info('Metrics: H:{humidity}; T:{temperature}; S:{soil_moisture}; W:{water_level}; F:{fan_speed}'.format(
+            humidity=humidity,
+            temperature=temperature,
+            soil_moisture=soil_moisture,
+            water_level=water_level,
+            fan_speed=fan_speed
+        ))
+
+        time.sleep(EXPORTER_UPDATE_INTERVAL)
 
 
 @run_async
 def light_control():
-    if not is_need_start(LIGHT_CONTROL, LIGHT_CONTROL_INTERVAL):
-        return False
-
-    light.adjust_light(period)
-    logging.debug('Light adjusted')
+    while True:
+        period = growing.get_current_period()
+        light.adjust_light(period)
+        logging.debug('Light adjusted')
+        time.sleep(LIGHT_CONTROL_INTERVAL)
 
 
 @run_async
 def fan_control():
-    if not is_need_start(FAN_CONTROL, FAN_CONTROL_INTERVAL):
-        return False
-
-    fan.adjust_fan(METRICS['temperature'])
-    logging.debug('Fan adjusted')
-
-
-@run_async
-def watering_control():
-    if not is_need_start(SOIL_MOISTURE_CONTROL, SOIL_MOISTURE_CONTROL_INTERVAL):
-        return False
-
-    watering.adjust_watering(METRICS['soil_moisture'])
-    logging.debug('Soil moisture adjusted')
+    while True:
+        fan.adjust_fan(METRICS['temperature'])
+        logging.debug('Fan adjusted')
+        time.sleep(FAN_CONTROL_INTERVAL)
 
 
 @run_async
 def humidify_control():
-    if not is_need_start(HUMIDIFY_CONTROL, HUMIDIFY_CONTROL_INTERVAL):
-        return False
-
-    humidify.adjust_humidify(period.humidity, METRICS['humidity'])
-    logging.debug('Humidity adjusted')
+    while True:
+        humidify.adjust_humidify(METRICS['temperature'], METRICS['humidity'])
+        logging.debug('Humidity adjusted')
+        time.sleep(HUMIDIFY_CONTROL_INTERVAL)
 
 
 if __name__ == '__main__':
@@ -160,25 +158,12 @@ if __name__ == '__main__':
     metrics = Metrics()
     light = Light(relays)
     fan = Fan(triac_hat)
-    watering = Watering(sensors, relays)
     humidify = Humidify(relays)
 
     start_prometheus_exporter(EXPORTER_SERVER_PORT)
     logging.debug('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))
 
-    while True:
-        period = growing.get_current_period()
-
-        t1 = update_metrics()
-        t2 = light_control()
-        t3 = fan_control()
-        t4 = watering_control()
-        t5 = humidify_control()
-
-        t1.join()
-        t2.join()
-        t3.join()
-        t4.join()
-        t5.join()
-
-        time.sleep(RUN_INTERVAL)
+    update_metrics()
+    light_control()
+    fan_control()
+    humidify_control()

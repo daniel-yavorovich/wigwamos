@@ -57,6 +57,7 @@ After first boot please configure:
     directory=/home/pi/wigwamos/
     autostart=true
     autorestart=true
+    environment=PYTHONUNBUFFERED="1"
     stdout_logfile=/var/log/wigwamos.log
     stderr_logfile=/var/log/wigwamos.log
     stdout_logfile_maxbytes=1MB
@@ -65,17 +66,18 @@ After first boot please configure:
     stderr_logfile_backups=10
     
     [program:api]
-    command=/usr/local/bin/flask run -h 0.0.0.0
+    command=bash -c "sleep 60 && /usr/local/bin/flask run -h 0.0.0.0"
     directory=/home/pi/wigwamos/
     autostart=true
     autorestart=true
-    environment=FLASK_APP="api.py"
+    environment=FLASK_APP="api.py",FLASK_ENV="development",PYTHONUNBUFFERED="1"
     stdout_logfile=/var/log/wigwamos-api.log
     stderr_logfile=/var/log/wigwamos-api.log
     stdout_logfile_maxbytes=1MB
     stdout_logfile_backups=10
     stderr_logfile_maxbytes=1MB
     stderr_logfile_backups=10
+    startsecs=60
     EOF
     systemctl reload supervisor
 

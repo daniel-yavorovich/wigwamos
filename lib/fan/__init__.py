@@ -2,8 +2,8 @@ from ..properties import Property
 
 
 class Fan(Property):
-    FAN_SPEED_MIN = 60
-    FAN_STEP_PERCENT = 5
+    FAN_SPEED_MIN = 50
+    FAN_STEP_PERCENT = 10
     FAN_TRIAC_HAT_CHANNEL = 1
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
     AUTO_MODE_PROPERTY_KEY = 'fan_manual_mode'
@@ -58,19 +58,16 @@ class Fan(Property):
         if current_temperature > 20:
             fan_speed_percent += self.FAN_STEP_PERCENT
 
-        if current_temperature > 22:
+        if current_temperature > 21:
             fan_speed_percent += self.FAN_STEP_PERCENT
 
-        if current_temperature > 24:
+        if current_temperature > 23:
             fan_speed_percent += self.FAN_STEP_PERCENT
 
-        if current_temperature > 26:
+        if current_temperature > 25:
             fan_speed_percent += self.FAN_STEP_PERCENT
 
-        if current_temperature > 28:
-            fan_speed_percent += self.FAN_STEP_PERCENT
-
-        if current_temperature > 30:
+        if current_temperature > 27:
             fan_speed_percent = 100
 
         self.set_fan_speed(fan_speed_percent)
