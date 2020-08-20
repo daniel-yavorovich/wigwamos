@@ -21,7 +21,7 @@ class Sensors:
 
     def get_humidity_temperature(self):
         humidity, temperature = Adafruit_DHT.read_retry(self.DHT_SENSOR, self.DHT_PIN)
-        if not humidity or not humidity:
+        if not humidity or not temperature or humidity > 100:
             return None, None
 
         return round(humidity, 2), round(temperature, 2)
