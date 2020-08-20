@@ -2,7 +2,7 @@ from ..properties import Property
 
 
 class Fan(Property):
-    FAN_SPEED_MIN = 60
+    FAN_SPEED_MIN = 70
     FAN_STEP_PERCENT = 5
     FAN_TRIAC_HAT_CHANNEL = 1
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
