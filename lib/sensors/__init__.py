@@ -39,6 +39,9 @@ class Sensors:
         return int(GPIO.input(self.SOIL_MOISTURE_PIN))
 
     def get_distance(self):
+        GPIO.output(self.RANGING_MODULE_TRIGGER_PIN, False)
+        time.sleep(2)
+
         # set Trigger to HIGH
         GPIO.output(self.RANGING_MODULE_TRIGGER_PIN, True)
 

@@ -14,7 +14,8 @@ from lib.sensors import Sensors
 from lib.triac_hat import TriacHat
 from lib.async_helper import run_async
 
-from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, FAN_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL
+from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
+    FAN_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL
 from prometheus_client import Gauge, Info, start_http_server as start_prometheus_exporter
 
 # Prometheus metrics
@@ -69,16 +70,17 @@ def is_need_start(service, interval):
 @run_async
 def update_metrics():
     while True:
+        # Get properties
         period = growing.get_current_period()
-
-        # Get metrics
-        humidity, temperature = sensors.get_humidity_temperature()
-        soil_moisture = sensors.get_soil_moisture()
         grow_days = growing.get_growing_day_count()
-        water_level = sensors.get_water_level()
-        pi_temperature = sensors.get_pi_temperature()
         light_brightness = light.get_light_brightness()
         fan_speed = fan.get_fan_speed()
+
+        # Get metrics
+        water_level = sensors.get_water_level()
+        humidity, temperature = sensors.get_humidity_temperature()
+        soil_moisture = sensors.get_soil_moisture()
+        pi_temperature = sensors.get_pi_temperature()
 
         # Update local metrics
         if humidity and temperature:
