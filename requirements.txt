@@ -7,3 +7,4 @@ Peewee==3.13.3
 prometheus-api-client==0.4.0
 Flask==1.1.2
 Flask-Cors==3.0.8
+gpiozero==1.5.1
