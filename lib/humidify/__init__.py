@@ -60,7 +60,7 @@ class Humidify(Property):
         logging.debug('Humidifier bottle updated')
 
     def adjust_humidify(self, current_temperature, current_humidity):
-        if not current_humidity or not current_humidity:
+        if not current_temperature or not current_humidity:
             return False
 
         logging.debug('Total humidifier usage: {}'.format(self.__get_total_usage()))
@@ -70,7 +70,6 @@ class Humidify(Property):
 
         # New algo
         target_humidity = self.get_ideal_humidity(current_temperature)
-
         if not target_humidity:
             return None
 
@@ -81,6 +80,9 @@ class Humidify(Property):
             self.relays.relay_turn_off(self.HUMIDIFIER_RELAY_NUM)
 
     def get_ideal_humidity(self, current_temperature):
+        if not current_temperature:
+            return None
+
         try:
             target_humidity_min, target_humidity_max = VDP_TEMPERATURE_HUMIDITY[int(current_temperature)]
             return int((target_humidity_min + target_humidity_max) / 2)
