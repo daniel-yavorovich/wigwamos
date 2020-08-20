@@ -48,9 +48,9 @@ LAST_EXECUTION_TIME = {
 }
 
 METRICS = {
-    'humidity': None,
-    'temperature': None,
-    'soil_moisture': None,
+    'humidity': 0,
+    'temperature': 0,
+    'soil_moisture': 1,
 }
 
 
@@ -79,7 +79,7 @@ def update_metrics():
         # Get metrics
         water_level = sensors.get_water_level()
         humidity, temperature = sensors.get_humidity_temperature()
-        soil_moisture = sensors.get_soil_moisture()
+        soil_moisture = int(sensors.is_soil_is_wet())
         pi_temperature = sensors.get_pi_temperature()
 
         # Update local metrics

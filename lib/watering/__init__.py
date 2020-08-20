@@ -47,7 +47,7 @@ class Watering(Property):
         self.set_watering_in_progress()
         self.relays.relay_turn_on(self.WATERING_RELAY_NUM)
 
-        while self.sensors.get_soil_moisture() == 1:
+        while not self.sensors.is_soil_is_wet:
             time.sleep(self.WATERING_STEP_DURATION)
 
         self.relays.relay_turn_off(self.WATERING_RELAY_NUM)

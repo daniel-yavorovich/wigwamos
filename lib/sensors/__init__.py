@@ -1,9 +1,8 @@
-import os
-import re
+import logging
 import Adafruit_DHT
 import RPi.GPIO as GPIO
-from gpiozero import DistanceSensor
 from settings import BOTTLE_HEIGHT
+from gpiozero import DistanceSensor, Button, CPUTemperature
 
 
 class Sensors:
@@ -15,13 +14,10 @@ class Sensors:
     RANGING_MODULE_ECHO_PIN = 27
 
     def __init__(self):
-        GPIO.setwarnings(False)
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.SOIL_MOISTURE_PIN, GPIO.IN)
-
+        self.soil_moisture_sensor = Button(self.SOIL_MOISTURE_PIN)
         self.distance_sensor = DistanceSensor(trigger=self.RANGING_MODULE_TRIGGER_PIN,
                                               echo=self.RANGING_MODULE_ECHO_PIN)
+        self.cpu_temperature_sensor = CPUTemperature()
 
     def get_humidity_temperature(self):
         humidity, temperature = Adafruit_DHT.read_retry(self.DHT_SENSOR, self.DHT_PIN)
@@ -37,13 +33,20 @@ class Sensors:
         """
         return int(GPIO.input(self.SOIL_MOISTURE_PIN))
 
+    def is_soil_is_wet(self):
+        return self.soil_moisture_sensor.is_active
+
     def get_water_level(self):
         """
         Returns the percentage
         of full water bottle
         """
 
-        distance_to_water = self.distance_sensor.distance * 100
+        try:
+            distance_to_water = self.distance_sensor.distance * 100
+        except Exception as e:
+            logging.warning(e)
+            distance_to_water = 0
 
         if distance_to_water > 1000:
             distance_to_water = 0
@@ -59,5 +62,4 @@ class Sensors:
         return round(result, 2)
 
     def get_pi_temperature(self):
-        temp = os.popen("vcgencmd measure_temp").readline()
-        return float(re.search(r'temp=(\d+\.\d+)\'C\n', temp).group(1))
+        return round(self.cpu_temperature_sensor.temperature, 2)
