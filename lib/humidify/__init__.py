@@ -85,7 +85,7 @@ class Humidify(Property):
 
         try:
             target_humidity_min, target_humidity_max = VDP_TEMPERATURE_HUMIDITY[int(current_temperature)]
-            return int((target_humidity_min + target_humidity_max) / 2)
+            return target_humidity_min
         except KeyError:
             logging.error("Temperature {} is incorrect".format(current_temperature))
             return None
