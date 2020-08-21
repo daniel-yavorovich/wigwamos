@@ -132,7 +132,7 @@ def light_control():
 @run_async
 def fan_control():
     while True:
-        fan.adjust_fan(METRICS['temperature'])
+        fan.adjust_fan(metrics.get_avg_temperature('10m'))
         logging.debug('Fan adjusted')
         time.sleep(FAN_CONTROL_INTERVAL)
 
@@ -140,7 +140,7 @@ def fan_control():
 @run_async
 def humidify_control():
     while True:
-        humidify.adjust_humidify(METRICS['temperature'], METRICS['humidity'])
+        humidify.adjust_humidify(metrics.get_avg_temperature('10m'), METRICS['humidity'])
         logging.debug('Humidity adjusted')
         time.sleep(HUMIDIFY_CONTROL_INTERVAL)
 
