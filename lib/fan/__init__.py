@@ -12,7 +12,7 @@ class Fan(Property):
         super().__init__()
         self.triac_hat = triac_hat
 
-        self.set_fan_speed(self.get_fan_speed(), force=True)
+        self.set_fan_speed(self.FAN_SPEED_MIN, force=True)
 
     def get_fan_speed(self):
         return int(self.get_property_value(self.FAN_SPEED_PROPERTY_KEY))
@@ -46,32 +46,34 @@ class Fan(Property):
     def is_manual_mode(self):
         return bool(self.get_property_value(self.AUTO_MODE_PROPERTY_KEY))
 
-    def get_fan_speed_by_temperature(self, temperature):
-        fan_speed_percent = self.FAN_SPEED_MIN
+    def get_ideal_fan_speed(self, target_temperature, current_temperature):
+        current_fan_speed = self.get_fan_speed()
 
-        if temperature > 20:
-            fan_speed_percent += self.FAN_STEP_PERCENT
+        if current_temperature <= 16:
+            return 0
 
-        if temperature > 21:
-            fan_speed_percent += self.FAN_STEP_PERCENT
+        if current_temperature >= 30:
+            return 100
 
-        if temperature > 23:
-            fan_speed_percent += self.FAN_STEP_PERCENT
+        if current_temperature < target_temperature:
+            fan_speed = current_fan_speed + 1
+        elif current_temperature > target_temperature:
+            fan_speed = current_fan_speed - 1
+        else:
+            return current_fan_speed
 
-        if temperature > 25:
-            fan_speed_percent += self.FAN_STEP_PERCENT
+        if fan_speed > 100:
+            return 100
+        elif fan_speed < self.FAN_SPEED_MIN:
+            return self.FAN_SPEED_MIN
+        else:
+            return fan_speed
 
-        if temperature > 27:
-            fan_speed_percent = 100
-
-        return fan_speed_percent
-
-    def adjust_fan(self, temperature):
-        if not temperature or self.is_manual_mode():
+    def adjust_fan(self, target_temperature, current_temperature):
+        if not current_temperature or not target_temperature or self.is_manual_mode():
             return False
 
-        fan_speed_percent = self.get_fan_speed_by_temperature(temperature)
-
+        fan_speed_percent = self.get_ideal_fan_speed(target_temperature, current_temperature)
         self.set_fan_speed(fan_speed_percent)
 
     def get_all_info(self):

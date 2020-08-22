@@ -121,7 +121,8 @@ def light_control():
 @run_async
 def fan_control():
     while True:
-        fan.adjust_fan(metrics.get_avg_temperature('10m'))
+        period = growing.get_current_period()
+        fan.adjust_fan(period.temperature, metrics.get_avg_temperature('10m'))
         logging.debug('Fan adjusted')
         time.sleep(FAN_CONTROL_INTERVAL)
 
