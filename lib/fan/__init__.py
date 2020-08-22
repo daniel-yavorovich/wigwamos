@@ -3,7 +3,7 @@ from ..properties import Property
 
 class Fan(Property):
     FAN_SPEED_MIN = 50
-    FAN_STEP_PERCENT = 10
+    FAN_STEP_PERCENT = 5
     FAN_TRIAC_HAT_CHANNEL = 1
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
     AUTO_MODE_PROPERTY_KEY = 'fan_manual_mode'
@@ -46,29 +46,31 @@ class Fan(Property):
     def is_manual_mode(self):
         return bool(self.get_property_value(self.AUTO_MODE_PROPERTY_KEY))
 
-    def adjust_fan(self, current_temperature):
-        if not current_temperature:
-            return False
-
-        if self.is_manual_mode():
-            return False
-
+    def get_fan_speed_by_temperature(self, temperature):
         fan_speed_percent = self.FAN_SPEED_MIN
 
-        if current_temperature > 20:
+        if temperature > 20:
             fan_speed_percent += self.FAN_STEP_PERCENT
 
-        if current_temperature > 21:
+        if temperature > 21:
             fan_speed_percent += self.FAN_STEP_PERCENT
 
-        if current_temperature > 23:
+        if temperature > 23:
             fan_speed_percent += self.FAN_STEP_PERCENT
 
-        if current_temperature > 25:
+        if temperature > 25:
             fan_speed_percent += self.FAN_STEP_PERCENT
 
-        if current_temperature > 27:
+        if temperature > 27:
             fan_speed_percent = 100
+
+        return fan_speed_percent
+
+    def adjust_fan(self, temperature):
+        if not temperature or self.is_manual_mode():
+            return False
+
+        fan_speed_percent = self.get_fan_speed_by_temperature(temperature)
 
         self.set_fan_speed(fan_speed_percent)
 
