@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import time
 import logging
-import datetime
 
 from lib.fan import Fan
 from lib.humidify import Humidify
@@ -13,47 +12,18 @@ from lib.relays import Relays
 from lib.sensors import Sensors
 from lib.triac_hat import TriacHat
 from lib.async_helper import run_async
+from lib.weather import Weather
 
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
-    FAN_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL
+    FAN_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL, UPDATE_WEATHER_INFO_INTERVAL
 from prometheus_client import start_http_server as start_prometheus_exporter
 from lib.metrics.exporter import *
-
-# Services
-UPDATE_METRICS = 'update_metrics'
-LIGHT_CONTROL = 'light_control'
-FAN_CONTROL = 'fan_control'
-HUMIDIFY_CONTROL = 'humidify_control'
-HUMIDIFY_PUMP_CONTROL = 'humidify_pump_control'
-SOIL_MOISTURE_CONTROL = 'soil_moisture_control'
-
-LAST_EXECUTION_TIME = {
-    UPDATE_METRICS: None,
-    LIGHT_CONTROL: None,
-    FAN_CONTROL: None,
-    HUMIDIFY_CONTROL: None,
-    HUMIDIFY_PUMP_CONTROL: None,
-    SOIL_MOISTURE_CONTROL: None,
-}
 
 METRICS = {
     'humidity': 0,
     'temperature': 0,
     'soil_moisture': 1,
 }
-
-
-def is_need_start(service, interval):
-    """
-    :param service: service name
-    :param interval: seconds count
-    :return: True if need start
-    """
-    now = datetime.datetime.now()
-
-    if not LAST_EXECUTION_TIME[service] or (now - LAST_EXECUTION_TIME[service]).seconds >= interval:
-        LAST_EXECUTION_TIME[service] = now
-        return True
 
 
 @run_async
@@ -135,6 +105,18 @@ def humidify_control():
         time.sleep(HUMIDIFY_CONTROL_INTERVAL)
 
 
+@run_async
+def update_weather_info():
+    while True:
+        out_humidity, out_temperature = weather.get_humidity_temperature()
+
+        if out_humidity and out_temperature:
+            OUTSIDE_AIR_HUMIDITY.set(out_humidity)
+            OUTSIDE_AIR_TEMPERATURE.set(out_temperature)
+
+        time.sleep(UPDATE_WEATHER_INFO_INTERVAL)
+
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
@@ -149,6 +131,7 @@ if __name__ == '__main__':
     fan = Fan()
     light = Light()
     humidify = Humidify(relays)
+    weather = Weather()
 
     # Init start settings
     fan.init(triac_hat)
@@ -160,3 +143,4 @@ if __name__ == '__main__':
     light_control()
     fan_control()
     humidify_control()
+    update_weather_info()
