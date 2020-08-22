@@ -5,6 +5,7 @@ import logging
 
 from ..properties import Property
 from .vdp import VDP_TEMPERATURE_HUMIDITY
+from ..metrics.exporter import HUMIDIFIER_PUMP_USAGE
 
 
 class IncorrectTemperature(Exception):
@@ -63,7 +64,10 @@ class Humidify(Property):
         if not current_temperature or not current_humidity:
             return False
 
-        logging.debug('Total humidifier usage: {}'.format(self.__get_total_usage()))
+        total_usage = self.__get_total_usage()
+        HUMIDIFIER_PUMP_USAGE.set(total_usage)
+        logging.debug('Total humidifier usage: {}'.format(total_usage))
+
         if self.__is_need_more_water():
             self.make_bottle_full()
             self.__reset_total_usage()
