@@ -122,7 +122,7 @@ def light_control():
 def fan_control():
     while True:
         period = growing.get_current_period()
-        fan.adjust_fan(period.temperature, metrics.get_avg_temperature('10m'))
+        fan.adjust_fan(period.temperature, metrics.get_avg_temperature('1m'))
         logging.debug('Fan adjusted')
         time.sleep(FAN_CONTROL_INTERVAL)
 
