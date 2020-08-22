@@ -113,7 +113,7 @@ def update_metrics():
 def light_control():
     while True:
         period = growing.get_current_period()
-        light.adjust_light(period)
+        light.adjust_light(relays, period)
         logging.debug('Light adjusted')
         time.sleep(LIGHT_CONTROL_INTERVAL)
 
@@ -122,7 +122,7 @@ def light_control():
 def fan_control():
     while True:
         period = growing.get_current_period()
-        fan.adjust_fan(period.temperature, metrics.get_avg_temperature('1m'))
+        fan.adjust_fan(triac_hat, period.temperature, metrics.get_avg_temperature('1m'))
         logging.debug('Fan adjusted')
         time.sleep(FAN_CONTROL_INTERVAL)
 
@@ -146,9 +146,12 @@ if __name__ == '__main__':
     sensors = Sensors()
     growing = Growing()
     metrics = Metrics()
-    light = Light(relays)
-    fan = Fan(triac_hat)
+    fan = Fan()
+    light = Light()
     humidify = Humidify(relays)
+
+    # Init start settings
+    fan.init(triac_hat)
 
     start_prometheus_exporter(EXPORTER_SERVER_PORT)
     logging.debug('Prometheus exporter listen on 0.0.0.0:{port}'.format(port=EXPORTER_SERVER_PORT))

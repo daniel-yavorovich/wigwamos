@@ -18,7 +18,7 @@ p = Property()
 app = Flask(__name__)
 cors = CORS(app)
 triac_hat = TriacHat()
-fan = Fan(triac_hat)
+fan = Fan()
 
 
 @app.errorhandler(404)
@@ -110,6 +110,11 @@ def fan_update():
         fan.set_manual_mode(False)
 
     if data.get('fan_speed') and data['fan_speed'] != p.get_property_value(fan.get_fan_speed()):
-        fan.set_fan_speed(data.get('fan_speed'))
+        fan.set_fan_speed_property(data.get('fan_speed'))
 
     return fan.get_all_info()
+
+
+@app.route('/api/light', methods=['POST'])
+def light_update():
+    pass

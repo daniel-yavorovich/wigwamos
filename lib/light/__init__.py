@@ -8,29 +8,28 @@ class Light(Property):
     COOLER_RELAY_NUM = 2
     LIGHT_BRIGHTNESS_PROPERTY_KEY = 'light_brightness'
 
-    def __init__(self, relays):
+    def __init__(self):
         super().__init__()
-        self.relays = relays
         self.set_property(self.LIGHT_BRIGHTNESS_PROPERTY_KEY, '0')
 
     def get_light_brightness(self):
         return int(self.get_property_value(self.LIGHT_BRIGHTNESS_PROPERTY_KEY))
 
-    def set_light_brightness(self, value):
+    def set_light_brightness(self, relays, value):
         self.set_property(self.LIGHT_BRIGHTNESS_PROPERTY_KEY, str(value))
 
         if value == 0:
-            return self.light_power_off()
+            return self.light_power_off(relays)
 
-        self.light_power_on()
+        self.light_power_on(relays)
 
-    def light_power_off(self):
-        self.relays.relay_turn_off(self.LIGHT_RELAY_NUM)
-        self.relays.relay_turn_off(self.COOLER_RELAY_NUM)
+    def light_power_off(self, relays):
+        relays.relay_turn_off(self.LIGHT_RELAY_NUM)
+        relays.relay_turn_off(self.COOLER_RELAY_NUM)
 
-    def light_power_on(self):
-        self.relays.relay_turn_on(self.LIGHT_RELAY_NUM)
-        self.relays.relay_turn_on(self.COOLER_RELAY_NUM)
+    def light_power_on(self, relays):
+        relays.relay_turn_on(self.LIGHT_RELAY_NUM)
+        relays.relay_turn_on(self.COOLER_RELAY_NUM)
 
     def is_light_disabled(self, period):
         if not period.sunrise_start and not period.sunrise_start and not period.sunrise_start and not period.sunrise_start:
@@ -41,7 +40,7 @@ class Light(Property):
         result = datetime.datetime.combine(today, time_to) - datetime.datetime.combine(today, time_from)
         return result.seconds
 
-    def adjust_light(self, period):
+    def adjust_light(self, relays, period):
         now = datetime.datetime.now().time()
 
         if self.is_light_disabled(period):
@@ -66,4 +65,4 @@ class Light(Property):
         light_brightness = int(light_brightness)
 
         if self.get_light_brightness() != light_brightness:
-            self.set_light_brightness(light_brightness)
+            self.set_light_brightness(relays, light_brightness)

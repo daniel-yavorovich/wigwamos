@@ -9,16 +9,16 @@ class Fan(Property):
     AUTO_MODE_PROPERTY_KEY = 'fan_manual_mode'
     ALLOWED_TEMPERATURE_HESITATION = 0.7
 
-    def __init__(self, triac_hat):
-        super().__init__()
-        self.triac_hat = triac_hat
-
-        self.set_fan_speed(self.FAN_SPEED_MIN, force=True)
+    def init(self, triac_hat):
+        self.set_fan_speed(triac_hat, self.FAN_SPEED_MIN, force=True)
 
     def get_fan_speed(self):
         return int(self.get_property_value(self.FAN_SPEED_PROPERTY_KEY))
 
-    def set_fan_speed(self, value, force=False):
+    def set_fan_speed_property(self, value):
+        self.set_property(self.FAN_SPEED_PROPERTY_KEY, str(value))
+
+    def set_fan_speed(self, triac_hat, value, force=False):
         if value < self.FAN_SPEED_MIN:
             value = self.FAN_SPEED_MIN
         elif value > 100:
@@ -27,14 +27,14 @@ class Fan(Property):
         if self.get_fan_speed() == value and not force:
             return False
 
-        self.set_property(self.FAN_SPEED_PROPERTY_KEY, str(value))
+        self.set_fan_speed_property(value)
 
         if value == 0:
-            self.triac_hat.disable_channel(self.FAN_TRIAC_HAT_CHANNEL)
+            triac_hat.disable_channel(self.FAN_TRIAC_HAT_CHANNEL)
             return True
 
-        self.triac_hat.change_voltage(self.FAN_TRIAC_HAT_CHANNEL, value)
-        self.triac_hat.enable_channel(self.FAN_TRIAC_HAT_CHANNEL)
+        triac_hat.change_voltage(self.FAN_TRIAC_HAT_CHANNEL, value)
+        triac_hat.enable_channel(self.FAN_TRIAC_HAT_CHANNEL)
 
         return True
 
@@ -59,6 +59,9 @@ class Fan(Property):
         if current_temperature >= 30:
             return 100
 
+        if current_fan_speed == 0:
+            current_fan_speed = self.FAN_SPEED_MIN
+
         t_min, t_max = self.__temp_with_hesitation(current_temperature)
         if t_min > target_temperature and t_max > target_temperature:
             fan_speed = current_fan_speed + 1
@@ -74,12 +77,12 @@ class Fan(Property):
         else:
             return fan_speed
 
-    def adjust_fan(self, target_temperature, current_temperature):
+    def adjust_fan(self, triac_hat, target_temperature, current_temperature):
         if not current_temperature or not target_temperature or self.is_manual_mode():
             return False
 
         fan_speed_percent = self.get_ideal_fan_speed(target_temperature, current_temperature)
-        self.set_fan_speed(fan_speed_percent)
+        self.set_fan_speed(triac_hat, fan_speed_percent)
 
     def get_all_info(self):
         return {
