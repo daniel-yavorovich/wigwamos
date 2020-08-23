@@ -10,7 +10,7 @@ class Fan(Property):
     ALLOWED_TEMPERATURE_HESITATION = 0.7
 
     def init(self, triac_hat):
-        self.set_fan_speed(triac_hat, self.FAN_SPEED_MIN, force=True)
+        self.set_fan_speed(triac_hat, self.get_fan_speed(), force=True)
 
     def get_fan_speed(self):
         return int(self.get_property_value(self.FAN_SPEED_PROPERTY_KEY))
@@ -24,7 +24,7 @@ class Fan(Property):
         elif value > 100:
             value = 100
 
-        if self.get_fan_speed() == value and not force:
+        if self.get_fan_speed() == value and not force and value != 0 and value != 100:
             return False
 
         self.set_fan_speed_property(value)
