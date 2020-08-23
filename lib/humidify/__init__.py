@@ -21,8 +21,8 @@ class Humidify(Property):
     HUMIDIFIER_RELAY_NUM = 1
     PUMP_RELAY_NUM = 3
 
-    PUMP_DURATION = 8
-    MAX_BOTTLE_CAPACITY = 120
+    PUMP_DURATION = 9
+    MAX_BOTTLE_CAPACITY = 300
 
     LAST_USAGE = datetime.datetime.now()
     TOTAL_USAGE = 0
