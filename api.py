@@ -7,7 +7,6 @@ from flask import Flask, abort, jsonify, request
 from lib.fan import Fan
 from lib.metrics import Metrics
 from lib.growing import Growing
-from lib.triac_hat import TriacHat
 from flask_cors import CORS
 
 from lib.properties import Property
@@ -17,7 +16,6 @@ g = Growing()
 p = Property()
 app = Flask(__name__)
 cors = CORS(app)
-triac_hat = TriacHat()
 fan = Fan()
 
 

@@ -21,7 +21,7 @@ class Humidify(Property):
     HUMIDIFIER_RELAY_NUM = 1
     PUMP_RELAY_NUM = 3
 
-    PUMP_DURATION = 5
+    PUMP_DURATION = 8
     MAX_BOTTLE_CAPACITY = 120
 
     LAST_USAGE = datetime.datetime.now()
@@ -72,7 +72,6 @@ class Humidify(Property):
             self.make_bottle_full()
             self.__reset_total_usage()
 
-        # New algo
         target_humidity = self.get_ideal_humidity(current_temperature)
         if not target_humidity:
             return None

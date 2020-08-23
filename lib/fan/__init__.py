@@ -1,3 +1,5 @@
+import logging
+
 from ..properties import Property
 
 
@@ -30,6 +32,7 @@ class Fan(Property):
         self.set_fan_speed_property(value)
 
         if value == 0:
+            logging.warning('Fan disabled!')
             triac_hat.disable_channel(self.FAN_TRIAC_HAT_CHANNEL)
             return True
 
@@ -70,9 +73,9 @@ class Fan(Property):
         else:
             return current_fan_speed
 
-        if fan_speed > 100:
+        if fan_speed >= 100:
             return 100
-        elif fan_speed < self.FAN_SPEED_MIN:
+        elif fan_speed <= self.FAN_SPEED_MIN:
             return self.FAN_SPEED_MIN
         else:
             return fan_speed
