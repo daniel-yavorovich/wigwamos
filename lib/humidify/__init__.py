@@ -5,7 +5,7 @@ import logging
 
 from ..properties import Property
 from .vdp import VDP_TEMPERATURE_HUMIDITY
-from ..metrics.exporter import HUMIDIFIER_PUMP_USAGE
+from ..metrics.exporter import HUMIDIFIER_USAGE
 
 
 class IncorrectTemperature(Exception):
@@ -21,7 +21,7 @@ class Humidify(Property):
     HUMIDIFIER_RELAY_NUM = 1
     PUMP_RELAY_NUM = 3
 
-    PUMP_DURATION = 9
+    PUMP_DURATION = 15
     MAX_BOTTLE_CAPACITY = 300
 
     LAST_USAGE = datetime.datetime.now()
@@ -42,7 +42,11 @@ class Humidify(Property):
 
     def __update_total_usage(self):
         now = datetime.datetime.now()
-        self.TOTAL_USAGE += (now - self.__get_last_usage()).seconds
+        usage_seconds = (now - self.__get_last_usage()).seconds
+
+        self.TOTAL_USAGE += usage_seconds
+        HUMIDIFIER_USAGE.inc(usage_seconds)
+
         self.__update_last_usage()
 
     def __get_total_usage(self):
@@ -65,7 +69,6 @@ class Humidify(Property):
             return False
 
         total_usage = self.__get_total_usage()
-        HUMIDIFIER_PUMP_USAGE.set(total_usage)
         logging.debug('Total humidifier usage: {}'.format(total_usage))
 
         if self.__is_need_more_water():
