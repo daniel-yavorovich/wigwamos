@@ -21,11 +21,14 @@ class Humidify(Property):
     HUMIDIFY_DISABLED_PROPERTY_NAME = 'humidify_disabled'
     MANUAL_MODE_PROPERTY_KEY = 'humidify_manual_mode'
     MANUAL_HUMIDITY_PROPERTY_KEY = 'humidify_manual_value'
+    PUMP_DURATION_PROPERTY_KEY = 'pump_duration'
+    PUMP_USAGE_INTERVAL_PROPERTY_KEY = 'pump_usage_interval'
+
     HUMIDIFIER_RELAY_NUM = 1
     PUMP_RELAY_NUM = 3
 
-    PUMP_DURATION = 20
-    MAX_BOTTLE_CAPACITY = 500
+    DEFAULT_PUMP_DURATION = 3
+    DEFAULT_PUMP_USAGE_INTERVAL = 500
 
     LAST_USAGE = datetime.datetime.now()
     TOTAL_USAGE = 0
@@ -58,7 +61,21 @@ class Humidify(Property):
         self.TOTAL_USAGE = 0
 
     def __is_need_more_water(self):
-        return self.__get_total_usage() > self.MAX_BOTTLE_CAPACITY
+        return self.__get_total_usage() > self.pump_usage_interval
+
+    @property
+    def pump_usage_interval(self):
+        return int(self.get_property_value(self.PUMP_USAGE_INTERVAL_PROPERTY_KEY, self.DEFAULT_PUMP_USAGE_INTERVAL))
+
+    @property
+    def pump_duration(self):
+        return int(self.get_property_value(self.PUMP_DURATION_PROPERTY_KEY, self.DEFAULT_PUMP_DURATION))
+
+    def set_pump_usage_interval(self, value):
+        self.set_property(self.PUMP_USAGE_INTERVAL_PROPERTY_KEY, value)
+
+    def set_pump_duration(self, value):
+        self.set_property(self.DEFAULT_PUMP_DURATION, value)
 
     def disable(self):
         self.set_property(self.HUMIDIFY_DISABLED_PROPERTY_NAME, 'true')
@@ -80,7 +97,7 @@ class Humidify(Property):
 
     def make_bottle_full(self, relays):
         relays.relay_turn_on(self.PUMP_RELAY_NUM)
-        time.sleep(self.PUMP_DURATION)
+        time.sleep(self.pump_duration)
         relays.relay_turn_off(self.PUMP_RELAY_NUM)
         logging.debug('Humidifier bottle updated')
 
@@ -139,5 +156,7 @@ class Humidify(Property):
         return {
             'manual_humidity': self.get_manual_humidity(),
             'manual_mode': self.is_manual_mode(),
-            'is_disabled': self.is_disabled()
+            'is_disabled': self.is_disabled(),
+            'pump_usage_interval': self.pump_usage_interval,
+            'pump_duration': self.pump_duration,
         }

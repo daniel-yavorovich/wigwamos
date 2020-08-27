@@ -82,12 +82,6 @@ def growing_update():
         if day_count != g.get_growing_day_count():
             g.set_day_counter(day_count)
 
-    if data.get('manual_mode'):
-        g.set_manual_mode(True)
-    else:
-        g.set_manual_mode(False)
-        fan.set_manual_mode(False)
-
     return g.get_all_info()
 
 
@@ -105,7 +99,6 @@ def fan_update():
 
     if data.get('manual_mode'):
         fan.set_manual_mode(True)
-        g.set_manual_mode(True)
     else:
         fan.set_manual_mode(False)
 
@@ -141,6 +134,12 @@ def humidify_update():
         h.set_manual_mode(True)
     else:
         h.set_manual_mode(False)
+
+    if data.get('pump_usage_interval'):
+        h.set_pump_usage_interval(data.get('pump_usage_interval'))
+
+    if data.get('pump_duration'):
+        h.set_pump_duration(data.get('pump_duration'))
 
     if data.get('manual_humidity') and data.get('manual_mode'):
         h.set_manual_humidity(data.get('manual_humidity'))

@@ -14,11 +14,11 @@ class Property:
 
         return item
 
-    def get_property_value(self, key):
+    def get_property_value(self, key, default=None):
         try:
             result = PropertyModel.get(PropertyModel.key == key)
         except PropertyModel.DoesNotExist:
-            return None
+            return default
 
         return result.value
 
