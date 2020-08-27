@@ -75,7 +75,7 @@ class Humidify(Property):
         self.set_property(self.PUMP_USAGE_INTERVAL_PROPERTY_KEY, value)
 
     def set_pump_duration(self, value):
-        self.set_property(self.DEFAULT_PUMP_DURATION, value)
+        self.set_property(self.PUMP_DURATION_PROPERTY_KEY, value)
 
     def disable(self):
         self.set_property(self.HUMIDIFY_DISABLED_PROPERTY_NAME, 'true')
