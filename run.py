@@ -64,7 +64,7 @@ def update_metrics():
 
         TARGET_TEMPERATURE.set(period.temperature)
 
-        target_humidity = humidify.get_ideal_humidity(temperature)
+        target_humidity = humidify.get_target_humidity(temperature)
         if target_humidity:
             TARGET_HUMIDITY.set(target_humidity)
 

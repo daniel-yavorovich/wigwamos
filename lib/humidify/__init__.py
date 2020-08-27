@@ -85,8 +85,11 @@ class Humidify(Property):
         logging.debug('Humidifier bottle updated')
 
     def adjust_humidify(self, relays, current_temperature, current_humidity):
-        if not current_temperature or not current_humidity or self.is_disabled():
+        if not current_temperature or not current_humidity:
             return False
+
+        if self.is_disabled():
+            return relays.relay_turn_off(self.HUMIDIFIER_RELAY_NUM)
 
         total_usage = self.__get_total_usage()
         logging.debug('Total humidifier usage: {}'.format(total_usage))
