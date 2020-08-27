@@ -100,7 +100,7 @@ def fan_control():
 @run_async
 def humidify_control():
     while True:
-        humidify.adjust_humidify(metrics.get_avg_temperature('10m'), METRICS['humidity'])
+        humidify.adjust_humidify(relays, metrics.get_avg_temperature('10m'), METRICS['humidity'])
         logging.debug('Humidity adjusted')
         time.sleep(HUMIDIFY_CONTROL_INTERVAL)
 
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     metrics = Metrics()
     fan = Fan()
     light = Light()
-    humidify = Humidify(relays)
+    humidify = Humidify()
     weather = Weather()
 
     # Init start settings

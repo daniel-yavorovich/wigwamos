@@ -5,6 +5,7 @@ import logging
 from flask import Flask, abort, jsonify, request
 
 from lib.fan import Fan
+from lib.humidify import Humidify
 from lib.metrics import Metrics
 from lib.growing import Growing
 from flask_cors import CORS
@@ -17,6 +18,7 @@ p = Property()
 app = Flask(__name__)
 cors = CORS(app)
 fan = Fan()
+h = Humidify()
 
 
 @app.errorhandler(404)
@@ -116,3 +118,31 @@ def fan_update():
 @app.route('/api/light', methods=['POST'])
 def light_update():
     pass
+
+
+@app.route('/api/humidify')
+def humidify_get():
+    return h.get_all_info()
+
+
+@app.route('/api/humidify', methods=['POST'])
+def humidify_update():
+    data = request.json
+
+    if not data:
+        return {}, 204
+
+    if data.get('is_disabled'):
+        h.disable()
+    else:
+        h.enable()
+
+    if data.get('manual_mode'):
+        h.set_manual_mode(True)
+    else:
+        h.set_manual_mode(False)
+
+    if data.get('manual_humidity') and data.get('manual_mode'):
+        h.set_manual_humidity(data.get('manual_humidity'))
+
+    return h.get_all_info()

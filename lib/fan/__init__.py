@@ -8,7 +8,7 @@ class Fan(Property):
     FAN_STEP_PERCENT = 5
     FAN_TRIAC_HAT_CHANNEL = 1
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
-    AUTO_MODE_PROPERTY_KEY = 'fan_manual_mode'
+    MANUAL_MODE_PROPERTY_KEY = 'fan_manual_mode'
     ALLOWED_TEMPERATURE_HESITATION = 0.7
 
     def init(self, triac_hat):
@@ -43,12 +43,12 @@ class Fan(Property):
 
     def set_manual_mode(self, value=False):
         if value:
-            self.set_property(self.AUTO_MODE_PROPERTY_KEY, True)
+            self.set_property(self.MANUAL_MODE_PROPERTY_KEY, True)
         else:
-            self.delete_property(self.AUTO_MODE_PROPERTY_KEY)
+            self.delete_property(self.MANUAL_MODE_PROPERTY_KEY)
 
     def is_manual_mode(self):
-        return bool(self.get_property_value(self.AUTO_MODE_PROPERTY_KEY))
+        return bool(self.get_property_value(self.MANUAL_MODE_PROPERTY_KEY))
 
     def __temp_with_hesitation(self, temperature):
         return temperature - self.ALLOWED_TEMPERATURE_HESITATION, temperature + self.ALLOWED_TEMPERATURE_HESITATION
