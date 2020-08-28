@@ -3,7 +3,6 @@ from prometheus_client import Gauge, Info, Counter
 GROW_INFO = Info('growing', 'Grow info')
 AIR_TEMPERATURE = Gauge('air_temperature', 'Air temperature')
 AIR_HUMIDITY = Gauge('air_humidity', 'Air humidity')
-SOIL_MOISTURE = Gauge('soil_moisture', 'Soil moisture')
 WATER_LEVEL = Gauge('water_level', 'Water level')
 PI_TEMPERATURE = Gauge('pi_temperature', 'Raspberry PI CPU temperature')
 LIGHT_BRIGHTNESS = Gauge('light_brightness', 'Light brightness')

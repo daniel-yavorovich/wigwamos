@@ -1,6 +1,5 @@
 import logging
 import Adafruit_DHT
-import RPi.GPIO as GPIO
 from settings import BOTTLE_HEIGHT
 from gpiozero import DistanceSensor, Button, CPUTemperature
 
@@ -9,12 +8,12 @@ class Sensors:
     DHT_SENSOR = Adafruit_DHT.DHT22
 
     DHT_PIN = 5
-    SOIL_MOISTURE_PIN = 21
+    HUMIDIFY_WATER_LEVEL_PIN = 21
     RANGING_MODULE_TRIGGER_PIN = 22
     RANGING_MODULE_ECHO_PIN = 27
 
     def __init__(self):
-        self.soil_moisture_sensor = Button(self.SOIL_MOISTURE_PIN)
+        self.humidify_water_level_sensor = Button(self.HUMIDIFY_WATER_LEVEL_PIN)
         self.distance_sensor = DistanceSensor(trigger=self.RANGING_MODULE_TRIGGER_PIN,
                                               echo=self.RANGING_MODULE_ECHO_PIN)
         self.cpu_temperature_sensor = CPUTemperature()
@@ -26,15 +25,8 @@ class Sensors:
 
         return round(humidity, 2), round(temperature, 2)
 
-    def get_soil_moisture(self):
-        """
-        0: all is well
-        1: need watering!
-        """
-        return int(GPIO.input(self.SOIL_MOISTURE_PIN))
-
-    def is_soil_is_wet(self):
-        return self.soil_moisture_sensor.is_active
+    def is_humidify_bottle_full(self):
+        return not self.humidify_water_level_sensor.is_active
 
     def get_water_level(self):
         """

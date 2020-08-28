@@ -21,8 +21,7 @@ from lib.metrics.exporter import *
 
 METRICS = {
     'humidity': 0,
-    'temperature': 0,
-    'soil_moisture': 1,
+    'temperature': 0
 }
 
 
@@ -38,20 +37,17 @@ def update_metrics():
         # Get metrics
         water_level = sensors.get_water_level()
         humidity, temperature = sensors.get_humidity_temperature()
-        soil_moisture = int(sensors.is_soil_is_wet())
         pi_temperature = sensors.get_pi_temperature()
 
         # Update local metrics
         if humidity and temperature:
             METRICS['humidity'] = humidity
             METRICS['temperature'] = temperature
-        METRICS['soil_moisture'] = soil_moisture
 
         # Update metrics in exporter
         if humidity and temperature:
             AIR_HUMIDITY.set(humidity)
             AIR_TEMPERATURE.set(temperature)
-        SOIL_MOISTURE.set(soil_moisture)
         GROW_INFO.info({
             'day': str(grow_days),
             'config': period.config.name,
@@ -68,10 +64,9 @@ def update_metrics():
         if target_humidity:
             TARGET_HUMIDITY.set(target_humidity)
 
-        logging.info('Metrics: H:{humidity}; T:{temperature}; S:{soil_moisture}; W:{water_level}; F:{fan_speed}'.format(
+        logging.info('Metrics: H:{humidity}; T:{temperature}; W:{water_level}; F:{fan_speed}'.format(
             humidity=humidity,
             temperature=temperature,
-            soil_moisture=soil_moisture,
             water_level=water_level,
             fan_speed=fan_speed
         ))
@@ -100,7 +95,8 @@ def fan_control():
 @run_async
 def humidify_control():
     while True:
-        humidify.adjust_humidify(relays, metrics.get_avg_temperature('10m'), METRICS['humidity'])
+        humidify.adjust_humidify(relays, metrics.get_avg_temperature('10m'), METRICS['humidity'],
+                                 sensors.is_humidify_bottle_full())
         logging.debug('Humidity adjusted')
         time.sleep(HUMIDIFY_CONTROL_INTERVAL)
 

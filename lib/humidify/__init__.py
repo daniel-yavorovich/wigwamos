@@ -60,8 +60,8 @@ class Humidify(Property):
     def __reset_total_usage(self):
         self.TOTAL_USAGE = 0
 
-    def __is_need_more_water(self):
-        return self.__get_total_usage() > self.pump_usage_interval
+    def __is_need_more_water(self, is_humidify_bottle_full):
+        return self.__get_total_usage() > self.pump_usage_interval and not is_humidify_bottle_full
 
     @property
     def pump_usage_interval(self):
@@ -101,7 +101,7 @@ class Humidify(Property):
         relays.relay_turn_off(self.PUMP_RELAY_NUM)
         logging.debug('Humidifier bottle updated')
 
-    def adjust_humidify(self, relays, current_temperature, current_humidity):
+    def adjust_humidify(self, relays, current_temperature, current_humidity, is_humidify_bottle_full):
         if not current_temperature or not current_humidity:
             return False
 
@@ -111,7 +111,7 @@ class Humidify(Property):
         total_usage = self.__get_total_usage()
         logging.debug('Total humidifier usage: {}'.format(total_usage))
 
-        if self.__is_need_more_water():
+        if self.__is_need_more_water(is_humidify_bottle_full):
             self.make_bottle_full(relays)
             self.__reset_total_usage()
 
