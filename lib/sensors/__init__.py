@@ -8,7 +8,7 @@ from gpiozero import DistanceSensor, Button, CPUTemperature
 class Sensors:
     DHT_SENSOR = Adafruit_DHT.DHT22
 
-    DHT_PIN = 4
+    DHT_PIN = 5
     SOIL_MOISTURE_PIN = 21
     RANGING_MODULE_TRIGGER_PIN = 22
     RANGING_MODULE_ECHO_PIN = 27
@@ -51,7 +51,7 @@ class Sensors:
         if distance_to_water > 1000:
             distance_to_water = 0
 
-        result = 100 - (distance_to_water - 1 / BOTTLE_HEIGHT * 100)
+        result = 100 - ((distance_to_water - 1) / BOTTLE_HEIGHT * 100)
 
         if result < 0:
             result = 0

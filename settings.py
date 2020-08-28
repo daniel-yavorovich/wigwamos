@@ -11,7 +11,7 @@ SOIL_MOISTURE_CONTROL_INTERVAL = int(os.environ.get('SOIL_MOISTURE_CONTROL_INTER
 HUMIDIFY_CONTROL_INTERVAL = int(os.environ.get('HUMIDIFY_CONTROL_INTERVAL', 1))
 UPDATE_WEATHER_INFO_INTERVAL = int(os.environ.get('UPDATE_WEATHER_INFO_INTERVAL', 300))
 
-BOTTLE_HEIGHT = float(os.environ.get('BOTTLE_HEIGHT', 27))
+BOTTLE_HEIGHT = float(os.environ.get('BOTTLE_HEIGHT', 20))
 
 API_HOST = os.environ.get('API_HOST', '0.0.0.0')
 API_PORT = int(os.environ.get('API_PORT', 80))
