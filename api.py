@@ -135,6 +135,12 @@ def humidify_update():
     else:
         h.set_manual_mode(False)
 
+    if data.get('pump_usage_interval'):
+        h.set_pump_usage_interval(data.get('pump_usage_interval'))
+
+    if data.get('pump_duration'):
+        h.set_pump_duration(data.get('pump_duration'))
+
     if data.get('manual_humidity') and data.get('manual_mode'):
         h.set_manual_humidity(data.get('manual_humidity'))
 

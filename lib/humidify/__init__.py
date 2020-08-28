@@ -61,7 +61,13 @@ class Humidify(Property):
         self.TOTAL_USAGE = 0
 
     def __is_need_more_water(self, is_humidify_bottle_full):
-        return self.__get_total_usage() > self.pump_usage_interval and not is_humidify_bottle_full
+        if is_humidify_bottle_full:
+            logging.debug('Humidify bottle is full')
+            return False
+
+        logging.info('Total: {}; interval: {}'.format(self.__get_total_usage(), self.pump_usage_interval))
+
+        return self.__get_total_usage() > self.pump_usage_interval
 
     @property
     def pump_usage_interval(self):
