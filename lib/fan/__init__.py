@@ -81,7 +81,7 @@ class Fan(Property):
         elif fan_speed < self.FAN_SPEED_MIN:
             fan_speed = self.FAN_SPEED_MIN
 
-        if fan_speed > 70 and is_extreme_low_humidity:
+        if fan_speed == 100 and is_extreme_low_humidity:
             fan_speed = self.FAN_SPEED_MIN
 
         return fan_speed
