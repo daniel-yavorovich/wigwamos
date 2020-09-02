@@ -87,7 +87,11 @@ def light_control():
 def fan_control():
     while True:
         period = growing.get_current_period()
-        fan.adjust_fan(triac_hat, period.temperature, metrics.get_avg_temperature('1m'))
+        avg_temperature = metrics.get_avg_temperature('1m')
+        target_humidity = humidify.get_target_humidity(avg_temperature)
+        is_extreme_low_humidity = humidify.is_extreme_low_humidity(target_humidity, METRICS['humidity'])
+
+        fan.adjust_fan(triac_hat, period.temperature, avg_temperature, is_extreme_low_humidity)
         logging.debug('Fan adjusted')
         time.sleep(FAN_CONTROL_INTERVAL)
 

@@ -10,6 +10,7 @@ class Fan(Property):
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
     MANUAL_MODE_PROPERTY_KEY = 'fan_manual_mode'
     ALLOWED_TEMPERATURE_HESITATION = 0.7
+    PREV_FAN_SPEED = None
 
     def init(self, triac_hat):
         self.set_fan_speed(triac_hat, self.get_fan_speed(), force=True)
@@ -26,7 +27,7 @@ class Fan(Property):
         elif value > 100:
             value = 100
 
-        if self.get_fan_speed() == value and not force and value != 0 and value != 100:
+        if self.PREV_FAN_SPEED == value and not force and value != 0 and value != 100:
             return False
 
         self.set_fan_speed_property(value)
@@ -38,6 +39,8 @@ class Fan(Property):
 
         triac_hat.change_voltage(self.FAN_TRIAC_HAT_CHANNEL, value)
         triac_hat.enable_channel(self.FAN_TRIAC_HAT_CHANNEL)
+
+        self.PREV_FAN_SPEED = value
 
         return True
 
@@ -53,7 +56,7 @@ class Fan(Property):
     def __temp_with_hesitation(self, temperature):
         return temperature - self.ALLOWED_TEMPERATURE_HESITATION, temperature + self.ALLOWED_TEMPERATURE_HESITATION
 
-    def get_ideal_fan_speed(self, target_temperature, current_temperature):
+    def get_ideal_fan_speed(self, target_temperature, current_temperature, is_extreme_low_humidity=False):
         current_fan_speed = self.get_fan_speed()
 
         if current_temperature <= 16:
@@ -73,18 +76,21 @@ class Fan(Property):
         else:
             return current_fan_speed
 
-        if fan_speed >= 100:
-            return 100
-        elif fan_speed <= self.FAN_SPEED_MIN:
-            return self.FAN_SPEED_MIN
-        else:
-            return fan_speed
+        if fan_speed > 100:
+            fan_speed = 100
+        elif fan_speed < self.FAN_SPEED_MIN:
+            fan_speed = self.FAN_SPEED_MIN
 
-    def adjust_fan(self, triac_hat, target_temperature, current_temperature):
+        if fan_speed > 70 and is_extreme_low_humidity:
+            fan_speed = self.FAN_SPEED_MIN
+
+        return fan_speed
+
+    def adjust_fan(self, triac_hat, target_temperature, current_temperature, is_extreme_low_humidity=False):
         if not current_temperature or not target_temperature or self.is_manual_mode():
             return False
 
-        fan_speed_percent = self.get_ideal_fan_speed(target_temperature, current_temperature)
+        fan_speed_percent = self.get_ideal_fan_speed(target_temperature, current_temperature, is_extreme_low_humidity)
         self.set_fan_speed(triac_hat, fan_speed_percent)
 
     def get_all_info(self):

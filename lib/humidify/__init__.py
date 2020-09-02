@@ -65,8 +65,6 @@ class Humidify(Property):
             logging.debug('Humidify bottle is full')
             return False
 
-        logging.info('Total: {}; interval: {}'.format(self.__get_total_usage(), self.pump_usage_interval))
-
         return self.__get_total_usage() > self.pump_usage_interval
 
     @property
@@ -166,3 +164,9 @@ class Humidify(Property):
             'pump_usage_interval': self.pump_usage_interval,
             'pump_duration': self.pump_duration,
         }
+
+    @staticmethod
+    def is_extreme_low_humidity(target_value, current_value):
+        if (target_value - current_value) > 3:
+            return True
+        return False
