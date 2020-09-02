@@ -6,6 +6,7 @@ from prometheus_api_client.prometheus_connect import PrometheusConnect
 
 class Metrics:
     DEFAULT_AVG_PERIOD = '1m'
+    HIGH_TEMPERATURE = 30
 
     def __init__(self):
         self.prom = PrometheusConnect()
@@ -40,3 +41,6 @@ class Metrics:
             end_time = datetime.now()
 
         return self.prom.custom_query_range(query=query, start_time=start_time, end_time=end_time, step=step)
+
+    def is_high_temperature(self):
+        return self.get_avg_temperature() > self.HIGH_TEMPERATURE

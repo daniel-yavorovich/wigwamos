@@ -1,5 +1,5 @@
+import logging
 import datetime
-
 from ..properties import Property
 
 
@@ -40,8 +40,12 @@ class Light(Property):
         result = datetime.datetime.combine(today, time_to) - datetime.datetime.combine(today, time_from)
         return result.seconds
 
-    def adjust_light(self, relays, period):
+    def adjust_light(self, relays, period, is_high_temperature=False):
         now = datetime.datetime.now().time()
+
+        if is_high_temperature:
+            logging.warning('The light is off due to high temperature!')
+            return self.set_light_brightness(relays, 0)
 
         if self.is_light_disabled(period):
             light_brightness = 0
@@ -65,4 +69,4 @@ class Light(Property):
         light_brightness = int(light_brightness)
 
         if self.get_light_brightness() != light_brightness:
-            self.set_light_brightness(relays, light_brightness)
+            return self.set_light_brightness(relays, light_brightness)

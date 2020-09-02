@@ -78,7 +78,8 @@ def update_metrics():
 def light_control():
     while True:
         period = growing.get_current_period()
-        light.adjust_light(relays, period)
+        is_high_temperature = metrics.is_high_temperature()
+        light.adjust_light(relays, period, is_high_temperature)
         logging.debug('Light adjusted')
         time.sleep(LIGHT_CONTROL_INTERVAL)
 
