@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import logging
-
+from dateutil import parser
 from flask import Flask, abort, jsonify, request
 
 from lib.fan import Fan
@@ -82,6 +82,42 @@ def growing_update():
         if day_count != g.get_growing_day_count():
             g.set_day_counter(day_count)
 
+    if data.get('sunrise_start'):
+        try:
+            sunrise_start = parser.parse(data['sunrise_start']).time()
+        except Exception as e:
+            logging.error(e)
+            return abort(400, description="Incorrect value '{}' for sunrise_start".format(data['sunrise_start']))
+
+        g.set_sunrise_start(sunrise_start)
+
+    if data.get('sunrise_stop'):
+        try:
+            sunrise_stop = parser.parse(data['sunrise_stop']).time()
+        except Exception as e:
+            logging.error(e)
+            return abort(400, description="Incorrect value '{}' for sunrise_stop".format(data['sunrise_stop']))
+
+        g.set_sunrise_stop(sunrise_stop)
+
+    if data.get('sunset_start'):
+        try:
+            sunset_start = parser.parse(data['sunset_start']).time()
+        except Exception as e:
+            logging.error(e)
+            return abort(400, description="Incorrect value '{}' for sunset_start".format(data['sunset_start']))
+
+        g.set_sunset_start(sunset_start)
+
+    if data.get('sunset_stop'):
+        try:
+            sunset_stop = parser.parse(data['sunset_stop']).time()
+        except Exception as e:
+            logging.error(e)
+            return abort(400, description="Incorrect value '{}' for sunset_stop".format(data['sunset_stop']))
+
+        g.set_sunset_stop(sunset_stop)
+
     return g.get_all_info()
 
 
@@ -106,11 +142,6 @@ def fan_update():
         fan.set_fan_speed_property(data.get('fan_speed'))
 
     return fan.get_all_info()
-
-
-@app.route('/api/light', methods=['POST'])
-def light_update():
-    pass
 
 
 @app.route('/api/humidify')

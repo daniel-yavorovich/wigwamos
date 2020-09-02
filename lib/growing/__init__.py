@@ -101,6 +101,26 @@ class Growing(Property):
         config = self.get_current_config()
         return config.periods.select().order_by('day_to')[-1].day_to
 
+    def set_sunrise_start(self, sunrise_start):
+        period = self.get_current_period()
+        period.sunrise_start = sunrise_start
+        period.save()
+
+    def set_sunrise_stop(self, sunrise_stop):
+        period = self.get_current_period()
+        period.sunrise_stop = sunrise_stop
+        period.save()
+
+    def set_sunset_start(self, sunset_start):
+        period = self.get_current_period()
+        period.sunset_start = sunset_start
+        period.save()
+
+    def set_sunset_stop(self, sunset_stop):
+        period = self.get_current_period()
+        period.sunset_stop = sunset_stop
+        period.save()
+
     def get_all_info(self):
         period = self.get_current_period()
         config = period.config
