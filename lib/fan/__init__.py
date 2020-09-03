@@ -87,11 +87,16 @@ class Fan(Property):
         return fan_speed
 
     def adjust_fan(self, triac_hat, target_temperature, current_temperature, is_extreme_low_humidity=False):
-        if not current_temperature or not target_temperature or self.is_manual_mode():
+        is_manual_mode = self.is_manual_mode()
+        if not is_manual_mode and (not current_temperature or not target_temperature):
             return False
 
-        fan_speed_percent = self.get_ideal_fan_speed(target_temperature, current_temperature, is_extreme_low_humidity)
-        self.set_fan_speed(triac_hat, fan_speed_percent)
+        if is_manual_mode:
+            fan_speed_percent = self.get_fan_speed()
+        else:
+            fan_speed_percent = self.get_ideal_fan_speed(target_temperature, current_temperature, is_extreme_low_humidity)
+
+        self.set_fan_speed(triac_hat, fan_speed_percent, is_manual_mode)
 
     def get_all_info(self):
         return {
