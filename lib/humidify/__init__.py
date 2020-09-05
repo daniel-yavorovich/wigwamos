@@ -29,7 +29,9 @@ class Humidify(Property):
 
     DEFAULT_PUMP_DURATION = 3
     DEFAULT_PUMP_USAGE_INTERVAL = 500
+
     EXTREME_HUMIDITY_DIFF = 10
+    EXTREME_TEMPERATURE_DIFF = 5
 
     LAST_USAGE = datetime.datetime.now()
     TOTAL_USAGE = 0
@@ -106,11 +108,11 @@ class Humidify(Property):
         relays.relay_turn_off(self.PUMP_RELAY_NUM)
         logging.debug('Humidifier bottle updated')
 
-    def adjust_humidify(self, relays, current_temperature, current_humidity, is_humidify_bottle_full):
-        if not current_temperature or not current_humidity:
+    def adjust_humidify(self, relays, current_temperature, target_temperature, current_humidity, is_humidify_bottle_full):
+        if not current_temperature or not current_humidity or not target_temperature:
             return False
 
-        if self.is_disabled():
+        if self.is_disabled() or self.is_extreme_low_temperature(target_temperature, current_temperature):
             return relays.relay_turn_off(self.HUMIDIFIER_RELAY_NUM)
 
         total_usage = self.__get_total_usage()
@@ -168,5 +170,10 @@ class Humidify(Property):
 
     def is_extreme_low_humidity(self, target_value, current_value):
         if (target_value - current_value) > self.EXTREME_HUMIDITY_DIFF:
+            return True
+        return False
+
+    def is_extreme_low_temperature(self, target_value, current_value):
+        if (target_value - current_value) > self.EXTREME_TEMPERATURE_DIFF:
             return True
         return False

@@ -100,7 +100,8 @@ def fan_control():
 @run_async
 def humidify_control():
     while True:
-        humidify.adjust_humidify(relays, metrics.get_avg_temperature('10m'), METRICS['humidity'],
+        period = growing.get_current_period()
+        humidify.adjust_humidify(relays, metrics.get_avg_temperature('10m'), period.temperature, METRICS['humidity'],
                                  sensors.is_humidify_bottle_full())
         logging.debug('Humidity adjusted')
         time.sleep(HUMIDIFY_CONTROL_INTERVAL)
