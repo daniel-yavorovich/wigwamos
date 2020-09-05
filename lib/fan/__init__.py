@@ -5,7 +5,7 @@ from ..properties import Property
 
 class Fan(Property):
     FAN_SPEED_MIN = 50
-    FAN_STEP_PERCENT = 5
+    FAN_STEP_PERCENT = 1
     FAN_TRIAC_HAT_CHANNEL = 1
     FAN_SPEED_PROPERTY_KEY = 'fan_speed'
     MANUAL_MODE_PROPERTY_KEY = 'fan_manual_mode'
@@ -70,9 +70,9 @@ class Fan(Property):
 
         t_min, t_max = self.__temp_with_hesitation(current_temperature)
         if (t_min > target_temperature and t_max > target_temperature) and not is_extreme_low_humidity:
-            fan_speed = current_fan_speed + 1
+            fan_speed = current_fan_speed + self.FAN_STEP_PERCENT
         elif (t_min < target_temperature and t_max < target_temperature) or is_extreme_low_humidity:
-            fan_speed = current_fan_speed - 1
+            fan_speed = current_fan_speed - self.FAN_STEP_PERCENT
         else:
             return current_fan_speed
 

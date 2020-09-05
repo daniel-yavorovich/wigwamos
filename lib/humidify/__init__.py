@@ -29,6 +29,7 @@ class Humidify(Property):
 
     DEFAULT_PUMP_DURATION = 3
     DEFAULT_PUMP_USAGE_INTERVAL = 500
+    EXTREME_HUMIDITY_DIFF = 10
 
     LAST_USAGE = datetime.datetime.now()
     TOTAL_USAGE = 0
@@ -165,8 +166,7 @@ class Humidify(Property):
             'pump_duration': self.pump_duration,
         }
 
-    @staticmethod
-    def is_extreme_low_humidity(target_value, current_value):
-        if (target_value - current_value) > 3:
+    def is_extreme_low_humidity(self, target_value, current_value):
+        if (target_value - current_value) > self.EXTREME_HUMIDITY_DIFF:
             return True
         return False
