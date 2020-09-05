@@ -6,26 +6,27 @@ Software & install documentation for WigwamBox - Open Source smart growbox.
 
 ## Functions
 
-* temperature control (by FAN)
-* humidity control (by humidifier)
+* temperature control
+  + if temperature is extreme high, system will temporary turn-off light
+  + if temperature is extreme low, system will temporary turn-off humidify
+* humidity control
 * growing config management
 * control light (day/night)
-* soil moisture control (auto-watering)
-* water level control (by ultra-sonic ranger)
+* water level control
 * storage and display metrics graphs
-* monitoring metrics & alerts into telegram channel about
+* monitoring metrics & alerts into telegram channel
 * display stats on micro display by button click
 
 ### Supported Metrics
 
 * Temperature
 * Humidity
-* Soil moisture
 * Grow days
 * Water level
 * PI CPU temperature
 * Light brightness
 * Fan speed
+* Humidify water level
 
 #### Grafana Dashboard screenshot
 

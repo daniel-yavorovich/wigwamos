@@ -12,6 +12,9 @@ class Fan(Property):
     ALLOWED_TEMPERATURE_HESITATION = 0.7
     PREV_FAN_SPEED = None
 
+    MIN_ALLOWED_TEMPERATURE = 16
+    MAX_ALLOWED_TEMPERATURE = 30
+
     def init(self, triac_hat):
         self.set_fan_speed(triac_hat, self.get_fan_speed(), force=True)
 
@@ -59,10 +62,10 @@ class Fan(Property):
     def get_ideal_fan_speed(self, target_temperature, current_temperature, is_extreme_low_humidity=False):
         current_fan_speed = self.get_fan_speed()
 
-        if current_temperature <= 16:
+        if current_temperature <= self.MIN_ALLOWED_TEMPERATURE:
             return 0
 
-        if current_temperature >= 30:
+        if current_temperature >= self.MAX_ALLOWED_TEMPERATURE:
             return 100
 
         if current_fan_speed == 0:
