@@ -49,19 +49,16 @@ class Light(Property):
         if self.is_light_disabled(period):
             light_brightness = 0
         elif period.sunrise_datetime <= now <= period.sunset_datetime:
-            if now < period.sunset_datetime:
-                seconds_from_sunrise_start = self.__get_time_diff(period.sunrise_datetime, now)
-                light_brightness = 100 * seconds_from_sunrise_start / period.sunrise_duration_seconds
-            else:
-                light_brightness = 100
+            seconds_from_sunrise_start = self.__get_time_diff(period.sunrise_datetime, now)
+            light_brightness = 100 * seconds_from_sunrise_start / period.sunrise_duration_seconds
         elif period.sunset_datetime <= now <= period.sunrise_datetime:
-            if now < period.sunrise_datetime:
-                seconds_from_sunset_start = self.__get_time_diff(period.sunset_datetime, now)
-                light_brightness = (-100 * seconds_from_sunset_start / period.sunset_duration_seconds) + 100
-            else:
-                light_brightness = 0
+            seconds_from_sunset_start = self.__get_time_diff(period.sunset_datetime, now)
+            light_brightness = (-100 * seconds_from_sunset_start / period.sunset_duration_seconds) + 100
         else:
             light_brightness = 0
+
+        if light_brightness > 100:
+            light_brightness = 100
 
         light_brightness = int(light_brightness)
 

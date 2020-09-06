@@ -36,7 +36,7 @@ class Growing(Property):
         return datetime.datetime.fromtimestamp(float(start_timestamp))
 
     def get_growing_day_count(self):
-        return (datetime.datetime.now() - self.get_start_growing_date()).days + 1
+        return (datetime.datetime.now() - self.get_start_growing_date()).days
 
     def __validate_config_name(self, name):
         pattern = re.compile(r'[A-Za-z0-9]+')
