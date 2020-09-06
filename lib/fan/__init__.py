@@ -19,7 +19,7 @@ class Fan(Property):
         self.set_fan_speed(triac_hat, self.get_fan_speed(), force=True)
 
     def get_fan_speed(self):
-        return int(self.get_property_value(self.FAN_SPEED_PROPERTY_KEY))
+        return int(self.get_property_value(self.FAN_SPEED_PROPERTY_KEY, self.FAN_SPEED_MIN))
 
     def set_fan_speed_property(self, value):
         self.set_property(self.FAN_SPEED_PROPERTY_KEY, str(value))

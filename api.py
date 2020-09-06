@@ -82,41 +82,41 @@ def growing_update():
         if day_count != g.get_growing_day_count():
             g.set_day_counter(day_count)
 
-    if data.get('sunrise_start'):
+    if data.get('sunrise'):
         try:
-            sunrise_start = parser.parse(data['sunrise_start']).time()
+            sunrise = parser.parse(data['sunrise']).time()
         except Exception as e:
             logging.error(e)
-            return abort(400, description="Incorrect value '{}' for sunrise_start".format(data['sunrise_start']))
+            return abort(400, description="Incorrect value '{}' for sunrise".format(data['sunrise']))
 
-        g.set_sunrise_start(sunrise_start)
+        g.set_sunrise(sunrise)
 
-    if data.get('sunrise_stop'):
+    if data.get('day_length_hours'):
         try:
-            sunrise_stop = parser.parse(data['sunrise_stop']).time()
+            day_length_hours = int(data['day_length_hours'])
         except Exception as e:
             logging.error(e)
-            return abort(400, description="Incorrect value '{}' for sunrise_stop".format(data['sunrise_stop']))
+            return abort(400, description="Incorrect value '{}' for day_length_hours".format(data['day_length_hours']))
 
-        g.set_sunrise_stop(sunrise_stop)
+        g.set_day_length_hours(day_length_hours)
 
-    if data.get('sunset_start'):
+    if data.get('sunrise_duration_minutes'):
         try:
-            sunset_start = parser.parse(data['sunset_start']).time()
+            sunrise_duration_minutes = int(data['sunrise_duration_minutes'])
         except Exception as e:
             logging.error(e)
-            return abort(400, description="Incorrect value '{}' for sunset_start".format(data['sunset_start']))
+            return abort(400, description="Incorrect value '{}' for sunrise_duration_minutes".format(data['sunrise_duration_minutes']))
 
-        g.set_sunset_start(sunset_start)
+        g.set_sunrise_duration_minutes(sunrise_duration_minutes)
 
-    if data.get('sunset_stop'):
+    if data.get('sunset_duration_minutes'):
         try:
-            sunset_stop = parser.parse(data['sunset_stop']).time()
+            sunset_duration_minutes = int(data['sunset_duration_minutes'])
         except Exception as e:
             logging.error(e)
-            return abort(400, description="Incorrect value '{}' for sunset_stop".format(data['sunset_stop']))
+            return abort(400, description="Incorrect value '{}' for sunset_duration_minutes".format(data['sunset_duration_minutes']))
 
-        g.set_sunset_stop(sunset_stop)
+        g.set_sunset_duration_minutes(sunset_duration_minutes)
 
     return g.get_all_info()
 

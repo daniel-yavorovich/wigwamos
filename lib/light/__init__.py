@@ -32,16 +32,15 @@ class Light(Property):
         relays.relay_turn_on(self.COOLER_RELAY_NUM)
 
     def is_light_disabled(self, period):
-        if not period.sunrise_start and not period.sunrise_start and not period.sunrise_start and not period.sunrise_start:
+        if not period.sunrise or not period.day_length_hours:
             return True
 
     def __get_time_diff(self, time_from, time_to):
-        today = datetime.date.today()
-        result = datetime.datetime.combine(today, time_to) - datetime.datetime.combine(today, time_from)
+        result = time_to - time_from
         return result.seconds
 
     def adjust_light(self, relays, period, is_high_temperature=False):
-        now = datetime.datetime.now().time()
+        now = datetime.datetime.now()
 
         if is_high_temperature:
             logging.warning('The light is off due to high temperature!')
@@ -49,18 +48,16 @@ class Light(Property):
 
         if self.is_light_disabled(period):
             light_brightness = 0
-        elif period.sunrise_start <= now <= period.sunset_start:
-            if now < period.sunrise_stop:
-                total_sunrise_seconds = self.__get_time_diff(period.sunrise_start, period.sunrise_stop)
-                seconds_from_sunrise_start = self.__get_time_diff(period.sunrise_start, now)
-                light_brightness = 100 * seconds_from_sunrise_start / total_sunrise_seconds
+        elif period.sunrise_datetime <= now <= period.sunset_datetime:
+            if now < period.sunset_datetime:
+                seconds_from_sunrise_start = self.__get_time_diff(period.sunrise_datetime, now)
+                light_brightness = 100 * seconds_from_sunrise_start / period.sunrise_duration_seconds
             else:
                 light_brightness = 100
-        elif period.sunset_start <= now <= period.sunrise_start:
-            if now < period.sunset_stop:
-                total_sunset_seconds = self.__get_time_diff(period.sunset_start, period.sunset_stop)
-                seconds_from_sunset_start = self.__get_time_diff(period.sunset_start, now)
-                light_brightness = (-100 * seconds_from_sunset_start / total_sunset_seconds) + 100
+        elif period.sunset_datetime <= now <= period.sunrise_datetime:
+            if now < period.sunrise_datetime:
+                seconds_from_sunset_start = self.__get_time_diff(period.sunset_datetime, now)
+                light_brightness = (-100 * seconds_from_sunset_start / period.sunset_duration_seconds) + 100
             else:
                 light_brightness = 0
         else:

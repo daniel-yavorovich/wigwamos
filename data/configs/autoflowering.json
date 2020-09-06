@@ -6,11 +6,10 @@
       "day_from": 1,
       "day_to": 7,
       "temperature": 24.0,
-      "humidity": 70,
-      "sunrise_start": null,
-      "sunrise_stop": null,
-      "sunset_start": null,
-      "sunset_stop": null,
+      "sunrise": null,
+      "day_length_hours": 0,
+      "sunrise_duration_minutes": 0,
+      "sunset_duration_minutes": 0,
       "red_spectrum": false
     },
     {
@@ -18,11 +17,10 @@
       "day_from": 8,
       "day_to": 38,
       "temperature": 26.0,
-      "humidity": 70,
-      "sunrise_start": "05:30",
-      "sunrise_stop": "06:00",
-      "sunset_start": "21:30",
-      "sunset_stop": "22:00",
+      "sunrise": "05:00",
+      "day_length_hours": 18,
+      "sunrise_duration_minutes": 30,
+      "sunset_duration_minutes": 30,
       "red_spectrum": false
     },
     {
@@ -30,11 +28,10 @@
       "day_from": 39,
       "day_to": 70,
       "temperature": 25.0,
-      "humidity": 65,
-      "sunrise_start": "05:30",
-      "sunrise_stop": "06:00",
-      "sunset_start": "17:30",
-      "sunset_stop": "18:00",
+      "sunrise": "05:00",
+      "day_length_hours": 12,
+      "sunrise_duration_minutes": 30,
+      "sunset_duration_minutes": 30,
       "red_spectrum": true
     }
   ]

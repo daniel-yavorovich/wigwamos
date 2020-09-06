@@ -101,24 +101,24 @@ class Growing(Property):
         config = self.get_current_config()
         return config.periods.select().order_by('day_to')[-1].day_to
 
-    def set_sunrise_start(self, sunrise_start):
+    def set_sunrise(self, value):
         period = self.get_current_period()
-        period.sunrise_start = sunrise_start
+        period.sunrise = value
         period.save()
 
-    def set_sunrise_stop(self, sunrise_stop):
+    def set_day_length_hours(self, value):
         period = self.get_current_period()
-        period.sunrise_stop = sunrise_stop
+        period.day_length_hours = int(value)
         period.save()
 
-    def set_sunset_start(self, sunset_start):
+    def set_sunrise_duration_minutes(self, value):
         period = self.get_current_period()
-        period.sunset_start = sunset_start
+        period.sunrise_duration_minutes = int(value)
         period.save()
 
-    def set_sunset_stop(self, sunset_stop):
+    def set_sunset_duration_minutes(self, value):
         period = self.get_current_period()
-        period.sunset_stop = sunset_stop
+        period.sunset_duration_minutes = int(value)
         period.save()
 
     def get_all_info(self):
@@ -132,8 +132,10 @@ class Growing(Property):
             'period': period.name,
             'day_count': day_count,
             'total_days': total_days,
-            'sunrise_start': period.sunrise_start.strftime('%H:%M') if period.sunrise_start else None,
-            'sunrise_stop': period.sunrise_stop.strftime('%H:%M') if period.sunrise_stop else None,
-            'sunset_start': period.sunset_start.strftime('%H:%M') if period.sunset_start else None,
-            'sunset_stop': period.sunset_stop.strftime('%H:%M') if period.sunset_stop else None
+            'sunrise': period.sunrise_datetime.strftime('%H:%M') if period.sunrise_datetime else None,
+            'sunset': period.sunset_datetime.strftime('%H:%M') if period.sunset_datetime else None,
+            'day_length_hours': period.day_length_hours,
+            'sunrise_duration_minutes': period.sunrise_duration_minutes,
+            'sunset_duration_minutes': period.sunset_duration_minutes,
+            'red_spectrum': period.red_spectrum,
         }

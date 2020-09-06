@@ -169,6 +169,9 @@ class Humidify(Property):
         }
 
     def is_extreme_low_humidity(self, target_value, current_value):
+        if not target_value or not current_value:
+            return False
+
         if (target_value - current_value) > self.EXTREME_HUMIDITY_DIFF:
             return True
         return False
