@@ -25,6 +25,11 @@ class Period(BaseModel):
             (('day_from', 'day_to'), True),
         )
 
+    def is_sunrise_sunset_in_same_day(self):
+        if not self.sunrise or not self.day_length_hours:
+            return True
+        return (self.sunrise.hour + self.day_length_hours) <= 24
+
     @property
     def sunrise_datetime(self):
         if not self.sunrise:
@@ -36,7 +41,10 @@ class Period(BaseModel):
     def sunset_datetime(self):
         if not self.sunrise:
             return None
-        return self.sunrise_datetime + timedelta(hours=self.day_length_hours)
+        result = self.sunrise_datetime + timedelta(hours=self.day_length_hours)
+        if not self.is_sunrise_sunset_in_same_day():
+            result += timedelta(days=1)
+        return result
 
     @property
     def sunrise_duration_seconds(self):
