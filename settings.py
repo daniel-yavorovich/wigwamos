@@ -16,5 +16,5 @@ API_HOST = os.environ.get('API_HOST', '0.0.0.0')
 API_PORT = int(os.environ.get('API_PORT', 80))
 API_DEBUG = int(os.environ.get('API_DEBUG', 1))
 
-OPENWEATHERMAP_API_KEY = os.environ.get('OPENWEATHERMAP_API_KEY', 'ea0ad2bc186708975093322f49b9add9')
-OPENWEATHERMAP_LOCATION = os.environ.get('OPENWEATHERMAP_LOCATION', 'Kharkiv,UA')
+OPENWEATHERMAP_API_KEY = os.environ.get('OPENWEATHERMAP_API_KEY', 'changeme')
+OPENWEATHERMAP_LOCATION = os.environ.get('OPENWEATHERMAP_LOCATION', 'California,US')
