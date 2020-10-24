@@ -14,6 +14,8 @@ class Period(BaseModel):
     day_from = IntegerField()
     day_to = IntegerField()
     temperature = FloatField(default=25)
+    humidity = IntegerField()
+    fan = IntegerField()
     sunrise = TimeField(null=True)
     day_length_hours = IntegerField(default=18)
     sunrise_duration_minutes = IntegerField(default=30)

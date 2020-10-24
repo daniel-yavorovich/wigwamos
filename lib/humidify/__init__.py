@@ -108,7 +108,8 @@ class Humidify(Property):
         relays.relay_turn_off(self.PUMP_RELAY_NUM)
         logging.debug('Humidifier bottle updated')
 
-    def adjust_humidify(self, relays, current_temperature, target_temperature, current_humidity, is_humidify_bottle_full):
+    def adjust_humidify(self, relays, current_temperature, target_temperature, current_humidity,
+                        is_humidify_bottle_full, custom_humidity=None):
         if not current_temperature or not current_humidity or not target_temperature:
             return False
 
@@ -122,7 +123,11 @@ class Humidify(Property):
             self.make_bottle_full(relays)
             self.__reset_total_usage()
 
-        target_humidity = self.get_target_humidity(current_temperature)
+        if custom_humidity:
+            target_humidity = custom_humidity
+        else:
+            target_humidity = self.get_target_humidity(current_temperature)
+
         if not target_humidity:
             return None
 

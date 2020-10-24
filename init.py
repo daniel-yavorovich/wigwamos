@@ -12,6 +12,7 @@ CONFIG_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 
 
 
 def sync_database():
+    db.drop_tables([Config, Period, Property])
     db.create_tables([Config, Period, Property])
 
 
@@ -21,6 +22,8 @@ def update_configs():
             config = growing.create_config(json.load(cf))
             if config:
                 logging.info('Config "{}" created'.format(config.name))
+
+    growing.set_day_counter(1)
 
 
 if __name__ == '__main__':

@@ -27,42 +27,63 @@ METRICS = {
 
 @run_async
 def update_metrics():
+    logging.info('Start update metrics service')
+    humidity = None
+    temperature = None
+    water_level = None
+    fan_speed = None
+
     while True:
-        # Get properties
-        period = growing.get_current_period()
-        grow_days = growing.get_growing_day_count()
-        light_brightness = light.get_light_brightness()
-        fan_speed = fan.get_fan_speed()
+        try:
+            light_brightness = light.get_light_brightness()
+            LIGHT_BRIGHTNESS.set(light_brightness)
+        except Exception as e:
+            logging.error(e)
 
-        # Get metrics
-        water_level = sensors.get_water_level()
-        humidity, temperature = sensors.get_humidity_temperature()
-        pi_temperature = sensors.get_pi_temperature()
+        try:
+            period = growing.get_current_period()
+            grow_days = growing.get_growing_day_count()
+            GROW_INFO.info({
+                'day': str(grow_days),
+                'config': period.config.name,
+                'period': period.name,
+            })
+            TARGET_TEMPERATURE.set(period.temperature)
+        except Exception as e:
+            logging.error(e)
 
-        # Update local metrics
-        if humidity and temperature:
-            METRICS['humidity'] = humidity
-            METRICS['temperature'] = temperature
+        try:
+            fan_speed = fan.get_fan_speed()
+            FAN_SPEED.set(fan_speed)
+        except Exception as e:
+            logging.error(e)
 
-        # Update metrics in exporter
-        if humidity and temperature:
-            AIR_HUMIDITY.set(humidity)
-            AIR_TEMPERATURE.set(temperature)
-        GROW_INFO.info({
-            'day': str(grow_days),
-            'config': period.config.name,
-            'period': period.name,
-        })
-        WATER_LEVEL.set(water_level)
-        PI_TEMPERATURE.set(pi_temperature)
-        LIGHT_BRIGHTNESS.set(light_brightness)
-        FAN_SPEED.set(fan_speed)
+        if False:
+            try:
+                water_level = sensors.get_water_level()
+                WATER_LEVEL.set(water_level)
+            except Exception as e:
+                logging.error(e)
 
-        TARGET_TEMPERATURE.set(period.temperature)
+        try:
+            humidity, temperature = sensors.get_humidity_temperature()
+            if humidity and temperature:
+                METRICS['humidity'] = humidity
+                METRICS['temperature'] = temperature
+                AIR_HUMIDITY.set(humidity)
+                AIR_TEMPERATURE.set(temperature)
 
-        target_humidity = humidify.get_target_humidity(temperature)
-        if target_humidity:
-            TARGET_HUMIDITY.set(target_humidity)
+            target_humidity = humidify.get_target_humidity(temperature)
+            if target_humidity:
+                TARGET_HUMIDITY.set(target_humidity)
+        except Exception as e:
+            logging.error(e)
+
+        try:
+            pi_temperature = sensors.get_pi_temperature()
+            PI_TEMPERATURE.set(pi_temperature)
+        except Exception as e:
+            logging.error(e)
 
         logging.info('Metrics: H:{humidity}; T:{temperature}; W:{water_level}; F:{fan_speed}'.format(
             humidity=humidity,
@@ -92,7 +113,11 @@ def fan_control():
         target_humidity = humidify.get_target_humidity(avg_temperature)
         is_extreme_low_humidity = humidify.is_extreme_low_humidity(target_humidity, METRICS['humidity'])
 
-        fan.adjust_fan(triac_hat, period.temperature, avg_temperature, is_extreme_low_humidity)
+        if period.fan == -1:
+            fan.adjust_fan(triac_hat, period.temperature, avg_temperature, is_extreme_low_humidity)
+        else:
+            fan.set_fan_speed(triac_hat, period.fan)
+
         logging.debug('Fan adjusted')
         time.sleep(FAN_CONTROL_INTERVAL)
 
@@ -101,8 +126,18 @@ def fan_control():
 def humidify_control():
     while True:
         period = growing.get_current_period()
-        humidify.adjust_humidify(relays, metrics.get_avg_temperature('10m'), period.temperature, METRICS['humidity'],
-                                 sensors.is_humidify_bottle_full())
+
+        if not period.humidity:
+            return None
+        elif period.humidity == -1:
+            target_humidity = None
+        else:
+            target_humidity = period.humidity
+
+        humidify.adjust_humidify(relays, metrics.get_avg_temperature('10m'), period.temperature,
+                                 METRICS['humidity'],
+                                 sensors.is_humidify_bottle_full(), target_humidity)
+
         logging.debug('Humidity adjusted')
         time.sleep(HUMIDIFY_CONTROL_INTERVAL)
 

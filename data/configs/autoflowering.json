@@ -6,6 +6,8 @@
       "day_from": 1,
       "day_to": 7,
       "temperature": 24.0,
+      "humidity": -1,
+      "fan": -1,
       "sunrise": null,
       "day_length_hours": 0,
       "sunrise_duration_minutes": 0,
@@ -17,6 +19,8 @@
       "day_from": 8,
       "day_to": 38,
       "temperature": 24.0,
+      "humidity": -1,
+      "fan": -1,
       "sunrise": "05:00",
       "day_length_hours": 18,
       "sunrise_duration_minutes": 30,
@@ -26,13 +30,41 @@
     {
       "name": "Flowering",
       "day_from": 39,
-      "day_to": 70,
+      "day_to": 60,
       "temperature": 24.0,
+      "humidity": 50,
+      "fan": -1,
       "sunrise": "05:00",
       "day_length_hours": 12,
       "sunrise_duration_minutes": 30,
       "sunset_duration_minutes": 30,
       "red_spectrum": true
+    },
+    {
+      "name": "Harvest",
+      "day_from": 61,
+      "day_to": 62,
+      "temperature": 24.0,
+      "humidity": 50,
+      "fan": -1,
+      "sunrise": null,
+      "day_length_hours": 0,
+      "sunrise_duration_minutes": 0,
+      "sunset_duration_minutes": 0,
+      "red_spectrum": false
+    },
+    {
+      "name": "Drain",
+      "day_from": 63,
+      "day_to": 68,
+      "temperature": 24.0,
+      "humidity": 50,
+      "fan": 100,
+      "sunrise": null,
+      "day_length_hours": 0,
+      "sunrise_duration_minutes": 0,
+      "sunset_duration_minutes": 0,
+      "red_spectrum": false
     }
   ]
 }
