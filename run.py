@@ -2,6 +2,7 @@
 import time
 import logging
 
+from lib.cam import Camera
 from lib.fan import Fan
 from lib.humidify import Humidify
 from lib.metrics import Metrics
@@ -15,7 +16,7 @@ from lib.async_helper import run_async
 from lib.weather import Weather
 
 from settings import EXPORTER_UPDATE_INTERVAL, EXPORTER_SERVER_PORT, LOG_LEVEL, LIGHT_CONTROL_INTERVAL, \
-    FAN_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL, UPDATE_WEATHER_INFO_INTERVAL
+    FAN_CONTROL_INTERVAL, HUMIDIFY_CONTROL_INTERVAL, UPDATE_WEATHER_INFO_INTERVAL, UPDATE_PHOTO_INTERVAL
 from prometheus_client import start_http_server as start_prometheus_exporter
 from lib.metrics.exporter import *
 
@@ -153,11 +154,19 @@ def update_weather_info():
         time.sleep(UPDATE_WEATHER_INFO_INTERVAL)
 
 
+@run_async
+def make_photo_timelapse():
+    while True:
+        cam.take_photo()
+        time.sleep(UPDATE_PHOTO_INTERVAL)
+
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s %(message)s', level=LOG_LEVEL)
 
     logging.info('Starting...')
 
+    cam = Camera()
     prop = Property()
     relays = Relays()
     triac_hat = TriacHat()
@@ -180,3 +189,4 @@ if __name__ == '__main__':
     fan_control()
     humidify_control()
     update_weather_info()
+    make_photo_timelapse()

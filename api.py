@@ -1,8 +1,9 @@
+import os
 from datetime import datetime
 
 import logging
 from dateutil import parser
-from flask import Flask, abort, jsonify, request
+from flask import Flask, abort, jsonify, request, send_file
 
 from lib.fan import Fan
 from lib.humidify import Humidify
@@ -11,6 +12,8 @@ from lib.growing import Growing
 from flask_cors import CORS
 
 from lib.properties import Property
+
+from settings import PHOTOS_DIR
 
 m = Metrics()
 g = Growing()
@@ -176,3 +179,8 @@ def humidify_update():
         h.set_manual_humidity(data.get('manual_humidity'))
 
     return h.get_all_info()
+
+@app.route('/api/photo/<name>')
+def photo_get(name='latest.png'):
+    path = os.path.join(PHOTOS_DIR, name)
+    return send_file(path, mimetype='image/png')

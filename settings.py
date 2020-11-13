@@ -9,6 +9,7 @@ LIGHT_CONTROL_INTERVAL = int(os.environ.get('LIGHT_CONTROL_INTERVAL', 60))
 FAN_CONTROL_INTERVAL = int(os.environ.get('FAN_CONTROL_INTERVAL', 60))
 HUMIDIFY_CONTROL_INTERVAL = int(os.environ.get('HUMIDIFY_CONTROL_INTERVAL', 1))
 UPDATE_WEATHER_INFO_INTERVAL = int(os.environ.get('UPDATE_WEATHER_INFO_INTERVAL', 300))
+UPDATE_PHOTO_INTERVAL = int(os.environ.get('UPDATE_PHOTO_INTERVAL', 60))
 
 BOTTLE_HEIGHT = float(os.environ.get('BOTTLE_HEIGHT', 20))
 
@@ -18,3 +19,5 @@ API_DEBUG = int(os.environ.get('API_DEBUG', 1))
 
 OPENWEATHERMAP_API_KEY = os.environ.get('OPENWEATHERMAP_API_KEY', 'changeme')
 OPENWEATHERMAP_LOCATION = os.environ.get('OPENWEATHERMAP_LOCATION', 'California,US')
+
+PHOTOS_DIR = os.environ.get('PHOTOS_DIR', '/data/photos')
