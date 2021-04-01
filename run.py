@@ -59,11 +59,12 @@ def update_metrics():
         except Exception as e:
             logging.error(e)
 
-        try:
-            water_level = sensors.get_water_level()
-            WATER_LEVEL.set(water_level)
-        except Exception as e:
-            logging.error(e)
+        if HUMIDIFY_CONTROL_INTERVAL:
+            try:
+                water_level = sensors.get_water_level()
+                WATER_LEVEL.set(water_level)
+            except Exception as e:
+                logging.error(e)
 
         try:
             humidity, temperature = sensors.get_humidity_temperature()

@@ -43,4 +43,7 @@ class Metrics:
         return self.prom.custom_query_range(query=query, start_time=start_time, end_time=end_time, step=step)
 
     def is_high_temperature(self):
+        avg_tmp = self.get_avg_temperature()
+        if not avg_tmp:
+            return False
         return self.get_avg_temperature() > self.HIGH_TEMPERATURE
