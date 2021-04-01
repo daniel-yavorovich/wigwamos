@@ -42,3 +42,5 @@ class Camera:
         image = self.get_photo()
         self.save_photo(path, image)
         self.__make_latest_photo_symlink(path)
+
+        return path

@@ -34,7 +34,7 @@ def update_metrics():
     water_level = None
     fan_speed = None
 
-    while True:
+    while EXPORTER_UPDATE_INTERVAL:
         try:
             light_brightness = light.get_light_brightness()
             LIGHT_BRIGHTNESS.set(light_brightness)
@@ -97,7 +97,7 @@ def update_metrics():
 
 @run_async
 def light_control():
-    while True:
+    while LIGHT_CONTROL_INTERVAL:
         period = growing.get_current_period()
         is_high_temperature = metrics.is_high_temperature()
         light.adjust_light(relays, period, is_high_temperature)
@@ -107,7 +107,7 @@ def light_control():
 
 @run_async
 def fan_control():
-    while True:
+    while FAN_CONTROL_INTERVAL:
         period = growing.get_current_period()
         avg_temperature = metrics.get_avg_temperature('1m')
         target_humidity = humidify.get_target_humidity(avg_temperature)
@@ -124,7 +124,7 @@ def fan_control():
 
 @run_async
 def humidify_control():
-    while True:
+    while HUMIDIFY_CONTROL_INTERVAL:
         period = growing.get_current_period()
 
         if not period.humidity:
@@ -144,7 +144,7 @@ def humidify_control():
 
 @run_async
 def update_weather_info():
-    while True:
+    while UPDATE_WEATHER_INFO_INTERVAL:
         out_humidity, out_temperature = weather.get_humidity_temperature()
 
         if out_humidity and out_temperature:
@@ -156,7 +156,7 @@ def update_weather_info():
 
 @run_async
 def make_photo_timelapse():
-    while True:
+    while UPDATE_PHOTO_INTERVAL:
         cam.take_photo()
         time.sleep(UPDATE_PHOTO_INTERVAL)
 
