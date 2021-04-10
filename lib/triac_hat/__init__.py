@@ -35,3 +35,11 @@ class TriacHat:
     def change_voltage(self, channel, value):
         self.__validate_channel_id(channel)
         self.scr.VoltageRegulation(channel, int(value))
+
+    def full_enable(self, channel):
+        self.change_voltage(channel, 100)
+        self.enable_channel(channel)
+
+    def full_disable(self, channel):
+        self.disable_channel(channel)
+        self.change_voltage(channel, 0)

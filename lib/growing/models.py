@@ -11,8 +11,8 @@ class Config(BaseModel):
 class Period(BaseModel):
     name = CharField()
     config = ForeignKeyField(Config, backref='periods')
-    day_from = IntegerField()
-    day_to = IntegerField()
+    day_from = IntegerField(unique=False)
+    day_to = IntegerField(unique=False)
     temperature = FloatField(default=25)
     humidity = IntegerField()
     fan = IntegerField()
@@ -24,7 +24,7 @@ class Period(BaseModel):
 
     class Meta:
         indexes = (
-            (('day_from', 'day_to'), True),
+            (('id', 'day_from', 'day_to'), True),
         )
 
     def is_sunrise_sunset_in_same_day(self):

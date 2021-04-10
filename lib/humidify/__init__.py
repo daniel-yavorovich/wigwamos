@@ -133,9 +133,11 @@ class Humidify(Property):
 
         if current_humidity < target_humidity:
             relays.relay_turn_on(self.HUMIDIFIER_RELAY_NUM)
+            logging.info('Humidified enabled')
             self.__update_total_usage()
         else:
             relays.relay_turn_off(self.HUMIDIFIER_RELAY_NUM)
+            logging.info('Humidified disabled')
 
     def get_target_humidity(self, current_temperature):
         if not current_temperature:
